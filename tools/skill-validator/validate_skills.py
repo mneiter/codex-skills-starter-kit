@@ -33,6 +33,24 @@ class Issue:
     path: Optional[Path] = None
 
 
+@dataclass
+class PackRoot:
+    kind: str
+    name: str
+    root: Path
+    readme_path: Path
+    manifest_path: Path
+    index_path: Path
+
+
+@dataclass
+class SolutionGroup:
+    name: str
+    root: Path
+    readme_path: Path
+    leaf_packs: List[PackRoot]
+
+
 def add_issue(issues: List[Issue], severity: str, message: str, path: Optional[Path] = None) -> None:
     issues.append(Issue(severity=severity, message=message, path=path))
 
@@ -333,11 +351,162 @@ def discover_base(repo_root: Path, issues: List[Issue]) -> Dict[str, Tuple[Path,
     return discovered
 
 
-def discover_pack_roots(repo_root: Path) -> List[Path]:
+def discover_pack_layout(repo_root: Path, issues: List[Issue]) -> Tuple[List[PackRoot], List[SolutionGroup]]:
     packs_root = repo_root / "packs"
+    direct_packs: List[PackRoot] = []
+    solution_groups: List[SolutionGroup] = []
     if not packs_root.exists():
-        return []
-    return [child for child in sorted(packs_root.iterdir()) if child.is_dir()]
+        return direct_packs, solution_groups
+
+    for child in sorted(packs_root.iterdir()):
+        if not child.is_dir():
+            continue
+
+        readme_path = child / "README.md"
+        manifest_path = child / "skills-manifest.md"
+        index_path = child / "skills-index.md"
+        child_dirs = [entry for entry in sorted(child.iterdir()) if entry.is_dir()]
+        extra_files = [entry for entry in child.iterdir() if entry.is_file() and entry.name != "README.md"]
+        nested_pack_roots = [
+            entry
+            for entry in child_dirs
+            if (entry / "skills-manifest.md").exists() or (entry / "skills-index.md").exists()
+        ]
+
+        if manifest_path.exists() or index_path.exists():
+            if nested_pack_roots:
+                add_issue(
+                    issues,
+                    "ERROR",
+                    f"Top-level packs entry '{child.name}' mixes direct pack and solution group signals.",
+                    child,
+                )
+            direct_packs.append(
+                PackRoot(
+                    kind="direct pack",
+                    name=child.name,
+                    root=child,
+                    readme_path=readme_path,
+                    manifest_path=manifest_path,
+                    index_path=index_path,
+                )
+            )
+            continue
+
+        if not readme_path.exists():
+            add_issue(
+                issues,
+                "ERROR",
+                f"Top-level packs entry '{child.name}' must be a direct pack or a solution group with README.md.",
+                child,
+            )
+            continue
+
+        if extra_files:
+            add_issue(
+                issues,
+                "ERROR",
+                f"Solution group '{child.name}' must contain only README.md at its root.",
+                child,
+            )
+
+        leaf_packs: List[PackRoot] = []
+        for subdir in child_dirs:
+            leaf_packs.append(
+                PackRoot(
+                    kind="leaf pack",
+                    name=f"{child.name}/{subdir.name}",
+                    root=subdir,
+                    readme_path=subdir / "README.md",
+                    manifest_path=subdir / "skills-manifest.md",
+                    index_path=subdir / "skills-index.md",
+                )
+            )
+        solution_groups.append(
+            SolutionGroup(
+                name=child.name,
+                root=child,
+                readme_path=readme_path,
+                leaf_packs=leaf_packs,
+            )
+        )
+
+    return direct_packs, solution_groups
+
+
+def discover_pack_skills(pack_root: PackRoot, repo_root: Path, issues: List[Issue]) -> Dict[str, Path]:
+    discovered: Dict[str, Path] = {}
+    skills_dir = pack_root.root / "skills"
+    if not skills_dir.exists():
+        return discovered
+
+    for child in sorted(skills_dir.iterdir()):
+        if not child.is_dir():
+            continue
+        skill_file = child / "SKILL.md"
+        if not skill_file.exists():
+            add_issue(issues, "ERROR", "Skill folder is missing SKILL.md.", child)
+            continue
+        discovered[child.name] = skill_file.relative_to(repo_root)
+    return discovered
+
+
+def validate_pack_root(
+    pack_root: PackRoot,
+    repo_root: Path,
+    schema: Dict[str, object],
+    seen_skill_names: Dict[str, Path],
+    issues: List[Issue],
+) -> int:
+    if not pack_root.readme_path.exists():
+        add_issue(issues, "ERROR", f"Missing README.md for {pack_root.kind} '{pack_root.name}'.", pack_root.root)
+
+    rows = parse_manifest(pack_root.manifest_path, issues)
+    index_names = parse_index(pack_root.index_path, issues)
+    discovered_pack = discover_pack_skills(pack_root, repo_root, issues)
+
+    row_map = validate_manifest_rows(
+        discovered=discovered_pack,
+        rows=rows,
+        manifest_path=pack_root.manifest_path,
+        scope_name=f"{pack_root.kind.title()} '{pack_root.name}'",
+        issues=issues,
+    )
+    validate_index_names(
+        discovered=discovered_pack,
+        index_names=index_names,
+        index_path=pack_root.index_path,
+        scope_name=f"{pack_root.kind.title()} '{pack_root.name}'",
+        issues=issues,
+    )
+
+    count = 0
+    for folder_name, relative_path in discovered_pack.items():
+        row = row_map.get(folder_name)
+        layer = row.get("Layer", "") if row else ""
+        if row and row.get("Layer") not in BASE_LAYERS:
+            add_issue(
+                issues,
+                "ERROR",
+                f"{pack_root.kind.title()} manifest for '{folder_name}' uses an invalid layer token.",
+                pack_root.manifest_path,
+            )
+        loaded = load_skill(repo_root / relative_path, layer, schema, issues)
+        if loaded is None:
+            continue
+        name, _metadata = loaded
+        if name in seen_skill_names:
+            add_issue(issues, "ERROR", f"Duplicate skill name '{name}'.", repo_root / relative_path)
+        seen_skill_names[name] = repo_root / relative_path
+        count += 1
+        if folder_name != name:
+            add_issue(
+                issues,
+                "WARN",
+                f"Folder name '{folder_name}' does not match skill name '{name}'.",
+                repo_root / relative_path,
+            )
+    return count
 
 
 def parse_args() -> argparse.Namespace:
@@ -355,12 +524,11 @@ def main() -> int:
     args = parse_args()
     repo_root = args.root.resolve()
     issues: List[Issue] = []
+    info_lines: List[str] = []
     schema_path = repo_root / "tools" / "skill-validator" / "skill-metadata-schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
     total_skills = 0
-    base_count = 0
-    pack_counts: Dict[str, int] = {}
     seen_skill_names: Dict[str, Path] = {}
 
     base_manifest_path = repo_root / ".codex" / "skills" / "skills-manifest.md"
@@ -372,11 +540,12 @@ def main() -> int:
     base_row_map = validate_manifest_rows(base_paths, base_rows, base_manifest_path, "Base skills", issues)
     validate_index_names(base_paths, base_index_names, base_index_path, "Base skills", issues)
 
+    base_count = 0
     for folder_name, (skill_path, layer) in base_skills.items():
         loaded = load_skill(skill_path, layer, schema, issues)
         if loaded is None:
             continue
-        name, metadata = loaded
+        name, _metadata = loaded
         row = base_row_map.get(name)
         if row and row.get("Layer") != layer:
             add_issue(
@@ -393,89 +562,43 @@ def main() -> int:
         if folder_name != name:
             add_issue(issues, "WARN", f"Folder name '{folder_name}' does not match skill name '{name}'.", skill_path)
 
-    for pack_root in discover_pack_roots(repo_root):
-        manifest_path = pack_root / "skills-manifest.md"
-        index_path = pack_root / "skills-index.md"
-        if not manifest_path.exists():
-            add_issue(issues, "ERROR", "Missing pack manifest.", manifest_path)
+    direct_packs, solution_groups = discover_pack_layout(repo_root, issues)
+
+    for direct_pack in direct_packs:
+        count = validate_pack_root(direct_pack, repo_root, schema, seen_skill_names, issues)
+        total_skills += count
+        if count == 0:
+            info_lines.append(f"INFO: direct pack {direct_pack.name} has no skills yet")
+        else:
+            info_lines.append(f"INFO: validated {count} skills in direct pack {direct_pack.name}")
+
+    for solution_group in solution_groups:
+        info_lines.append(f"INFO: discovered solution group {solution_group.name}")
+        if not solution_group.leaf_packs:
+            info_lines.append(f"INFO: solution group {solution_group.name} has no leaf packs yet")
             continue
-        if not index_path.exists():
-            add_issue(issues, "ERROR", "Missing pack index.", index_path)
-            continue
-
-        rows = parse_manifest(manifest_path, issues)
-        index_names = parse_index(index_path, issues)
-        skills_dir = pack_root / "skills"
-        discovered_pack: Dict[str, Path] = {}
-        if skills_dir.exists():
-            for child in sorted(skills_dir.iterdir()):
-                if not child.is_dir():
-                    continue
-                skill_file = child / "SKILL.md"
-                if not skill_file.exists():
-                    add_issue(issues, "ERROR", "Skill folder is missing SKILL.md.", child)
-                    continue
-                discovered_pack[child.name] = skill_file.relative_to(repo_root)
-
-        row_map = validate_manifest_rows(
-            discovered_pack,
-            rows,
-            manifest_path,
-            f"Pack '{pack_root.name}'",
-            issues,
-        )
-        validate_index_names(discovered_pack, index_names, index_path, f"Pack '{pack_root.name}'", issues)
-
-        if not discovered_pack:
-            add_issue(issues, "INFO", f"pack {pack_root.name} has no skills yet", pack_root)
-            pack_counts[pack_root.name] = 0
-            continue
-
-        pack_counts[pack_root.name] = 0
-        for folder_name, relative_path in discovered_pack.items():
-            row = row_map.get(folder_name)
-            layer = row.get("Layer", "") if row else ""
-            if row and row.get("Layer") not in BASE_LAYERS:
-                add_issue(
-                    issues,
-                    "ERROR",
-                    f"Pack manifest for '{folder_name}' uses an invalid layer token.",
-                    manifest_path,
-                )
-            loaded = load_skill(repo_root / relative_path, layer, schema, issues)
-            if loaded is None:
-                continue
-            name, _metadata = loaded
-            if name in seen_skill_names:
-                add_issue(issues, "ERROR", f"Duplicate skill name '{name}'.", repo_root / relative_path)
-            seen_skill_names[name] = repo_root / relative_path
-            pack_counts[pack_root.name] += 1
-            total_skills += 1
-            if folder_name != name:
-                add_issue(
-                    issues,
-                    "WARN",
-                    f"Folder name '{folder_name}' does not match skill name '{name}'.",
-                    repo_root / relative_path,
-                )
+        for leaf_pack in solution_group.leaf_packs:
+            count = validate_pack_root(leaf_pack, repo_root, schema, seen_skill_names, issues)
+            total_skills += count
+            if count == 0:
+                info_lines.append(f"INFO: leaf pack {leaf_pack.name} has no skills yet")
+            else:
+                info_lines.append(f"INFO: validated {count} skills in leaf pack {leaf_pack.name}")
 
     errors = [issue for issue in issues if issue.severity == "ERROR"]
     warnings = [issue for issue in issues if issue.severity == "WARN"]
-    infos = [issue for issue in issues if issue.severity == "INFO"]
 
     print(f"INFO: discovered {base_count} canonical base skills")
-    for info in infos:
-        suffix = f" ({relpath(info.path, repo_root)})" if info.path else ""
-        print(f"INFO: {info.message}{suffix}")
-    for pack_name, count in sorted(pack_counts.items()):
-        if count > 0:
-            print(f"INFO: validated {count} skills in pack {pack_name}")
+    for line in info_lines:
+        print(line)
     for issue in warnings + errors:
         suffix = f" ({relpath(issue.path, repo_root)})" if issue.path else ""
         print(f"{issue.severity}: {issue.message}{suffix}")
 
     if errors:
-        print(f"INFO: validation failed with {total_skills} skills checked, {len(errors)} errors, {len(warnings)} warnings")
+        print(
+            f"INFO: validation failed with {total_skills} skills checked, {len(errors)} errors, {len(warnings)} warnings"
+        )
         return 1
 
     print(f"INFO: validation passed with {total_skills} skills checked, 0 errors, {len(warnings)} warnings")

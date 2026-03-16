@@ -1,6 +1,6 @@
-# React Pack Manifest
+# Python Leaf Pack Manifest
 
-This manifest tracks skills in `packs/react/`.
+This manifest tracks skills in `packs/backend/python/`.
 
 ## Status Values
 
@@ -11,7 +11,7 @@ This manifest tracks skills in `packs/react/`.
 
 ## Skills
 
-No React pack skills have been added yet.
+No Python leaf pack skills have been added yet.
 
 | Skill | Layer | Status | Path | Purpose |
 | --- | --- | --- | --- | --- |

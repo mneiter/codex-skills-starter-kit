@@ -22,11 +22,14 @@ Use this workflow when copying `codex-skills-starter-kit` into a new repository.
 ## Extension Guidance
 
 - Put project-local skills outside the canonical base folders when they are not broadly reusable.
-- Put technology-specific packs under a separate namespace such as `packs/<pack-name>/`.
+- Use a direct pack at `packs/<pack-name>/` for cross-cutting capabilities or workflows such as `packs/skill-development/`.
+- Use a leaf pack at `packs/<group>/<pack-name>/` when the pack clearly belongs to a solution group such as `packs/frontend/angular/`.
+- Keep solution groups lightweight and place manifests and indexes only inside direct packs and leaf packs.
 - Preserve the meaning and names of canonical base skills.
 
 ## Anti-Patterns
 
 - editing base skills to carry project-specific knowledge
 - mixing local workflow rules into shared generic skills
+- treating a solution group as a pack root
 - skipping manifest and index updates after adding skills

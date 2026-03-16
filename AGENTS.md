@@ -8,8 +8,11 @@ These rules define how Codex should operate when maintaining this starter-kit re
 
 - Keep the canonical base kit technology-agnostic.
 - Add new base skills only when they are reusable across many projects and do not depend on a specific stack, runtime, framework, vendor, or deployment model.
-- Do not place technology packs, framework packs, or project-specific skills inside `.codex/skills/orchestration`, `.codex/skills/guardrails`, or `.codex/skills/atomic`.
+- Do not place direct packs, leaf packs, or project-specific skills inside `.codex/skills/orchestration`, `.codex/skills/guardrails`, or `.codex/skills/atomic`.
 - Treat optional packs under `packs/` as non-canonical extensions that must remain outside the canonical base layer.
+- Use the canonical terms consistently: `base skills`, `direct pack`, `solution group`, and `leaf pack`.
+- Keep `packs/<group>/` lightweight as a solution group with only `README.md`.
+- Keep manifests and indexes only inside direct packs and leaf packs.
 
 ## Repository Consistency
 

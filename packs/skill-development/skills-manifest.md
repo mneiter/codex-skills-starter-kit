@@ -1,6 +1,6 @@
-# Skill Development Pack Manifest
+# Skill Development Direct Pack Manifest
 
-This manifest lists the skills included in the optional `packs/skill-development/` extension.
+This manifest lists the skills included in the direct pack `packs/skill-development/`.
 
 ## Status Values
 

@@ -2,12 +2,14 @@
 
 ## Overview
 
-This starter kit uses two complementary organizational axes so reusable Codex behavior can grow without collapsing into a single oversized workflow:
+This starter kit uses two complementary organizational axes:
 
-- the canonical responsibility layer model
-- optional pack grouping for technology or domain-specific extensions
+- the canonical responsibility layer model for base skills
+- the pack model for specialized extensions
 
-## Responsibility Layers
+## Base Skills
+
+The canonical base skills live under `.codex/skills/` and remain independent from packs.
 
 ### Orchestration
 
@@ -21,44 +23,40 @@ Guardrail skills keep work safe, bounded, and reviewable. They preserve progress
 
 Atomic skills perform focused reusable tasks. They should solve one narrow problem well and remain easy to compose inside larger workflows.
 
-## Optional Pack Grouping
+## Pack Model
 
-Packs group skills and supporting material by technology or domain without changing the meaning of the canonical base layer. Pack membership is separate from layer classification.
+Packs are the second axis of organization.
 
-- a pack may contain orchestration, guardrails, and atomic skills
-- pack membership tells you where a skill belongs organizationally
-- layer tells you what responsibility the skill performs
-- packs are extensions and must not replace or relabel canonical base skills
+- a `direct pack` lives at `packs/<pack-name>/`
+- a `solution group` lives at `packs/<group>/`
+- a `leaf pack` lives at `packs/<group>/<pack-name>/`
+
+Pack placement does not replace layer classification. A direct pack or leaf pack may contain orchestration, guardrails, and atomic skills.
 
 ## Why The Two Axes Matter
 
-The layer model and pack model together prevent common failure modes:
+The two axes help prevent:
 
-- intake logic leaking into task execution
-- verification being skipped or buried inside implementation
-- broad skills combining too many responsibilities
-- project-specific needs polluting shared reusable assets
-- extension content pretending to be part of the canonical base layer
-
-By separating concerns, the starter kit stays easier to maintain and easier to extend.
+- base skills becoming specialized or stack-bound
+- specialized packs pretending to be part of the canonical base layer
+- large workflows mixing responsibility classification with organizational grouping
+- pack sprawl without clear functional boundaries
 
 ## Extension Model
 
-The base kit is the shared foundation. New project-local skills or optional packs should extend the system without modifying the meaning of canonical base skills.
-
 Use these rules:
 
-- add new reusable generic skills to the correct base layer only when they truly belong in the base kit
+- add new reusable generic skills to the correct base layer only when they truly belong in the shared foundation
 - add project-specific skills outside the canonical base folders
-- add optional packs under a separate namespace such as `packs/<pack-name>/`
-- keep pack manifests, indexes, and docs separate from the canonical base catalogs
+- add cross-cutting extensions as direct packs such as `packs/skill-development/`
+- add specialized packs under solution groups such as `packs/frontend/angular/`
+- keep solution groups lightweight and keep manifests and indexes only at direct-pack and leaf-pack roots
 
-Optional packs are non-canonical extensions. They may add their own skills, templates, references, and docs, but they must not relabel, replace, or absorb the canonical base skills under `.codex/skills/`.
+## Canonical Examples
 
-## Design Principles
-
-- prefer composable skills over monolithic workflows
-- keep the base layer generic
-- keep pack scaffolds explicit so future extension points are obvious
-- document availability through manifests and indexes
-- make boundaries explicit so extension remains safe
+- `packs/skill-development/`
+- `packs/frontend/angular/`
+- `packs/frontend/react/`
+- `packs/backend/python/`
+- `packs/backend/dotnet/`
+- `packs/platform/devops/`
