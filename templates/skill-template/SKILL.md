@@ -5,7 +5,7 @@ description: Describe what the skill does and when it should be used. Keep the d
 
 # Purpose
 
-State the single primary responsibility of the skill and the outcome it is meant to produce. Keep the purpose centered on what the user is trying to achieve, not on the implementation details hidden inside the skill.
+State the single primary responsibility of the skill and the outcome it is meant to produce. Keep the purpose centered on what the user is trying to achieve, not on the implementation details hidden inside the skill. Make the first paragraph concise enough to serve as clean metadata.
 
 # When To Use
 
@@ -15,10 +15,14 @@ Describe the conditions that make this skill the right choice.
 - mention a few strong trigger phrases or situations
 - make clear when the skill should not trigger to avoid overlap with neighboring skills
 - keep the description broad enough to generalize, but specific enough to be distinctive
+- prefer list-shaped guidance so trigger metadata is easy to derive
 
 # Inputs
 
 List the information, context, artifacts, or constraints needed before this skill runs.
+
+- if the skill has non-obvious dependencies, add one bullet beginning with `Dependencies:`
+- keep each input discrete enough to normalize into metadata cleanly
 
 # Process
 
@@ -29,7 +33,7 @@ List the information, context, artifacts, or constraints needed before this skil
 
 # Outputs
 
-List the expected artifacts, decisions, or summaries produced by the skill. Be explicit about structure when the output format matters.
+List the expected artifacts, decisions, or summaries produced by the skill. Be explicit about structure when the output format matters. Prefer bullet lists when possible so outputs are easy to validate.
 
 # Guardrails
 
@@ -45,6 +49,7 @@ Describe how to tell whether the skill result is complete, correct, and within s
 
 - for objective skills, note a small validation path or expected checks
 - for subjective skills, describe the review criteria clearly
+- keep verification points concrete enough to extract into normalized metadata
 
 # Escalation
 
