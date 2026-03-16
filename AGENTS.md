@@ -9,6 +9,7 @@ These rules define how Codex should operate when maintaining this starter-kit re
 - Keep the canonical base kit technology-agnostic.
 - Add new base skills only when they are reusable across many projects and do not depend on a specific stack, runtime, framework, vendor, or deployment model.
 - Do not place technology packs, framework packs, or project-specific skills inside `.codex/skills/orchestration`, `.codex/skills/guardrails`, or `.codex/skills/atomic`.
+- Treat optional packs under `packs/` as non-canonical extensions that must remain outside the canonical base layer.
 
 ## Repository Consistency
 

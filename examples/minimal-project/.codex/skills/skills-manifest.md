@@ -13,6 +13,10 @@ This example manifest shows how an adopted repository can register local additio
 
 In a real adopted repository, keep the canonical base manifest copied from the starter kit. This example omits the base entries to stay focused on local extensions.
 
+## Optional Pack Note
+
+If the repository attaches an optional pack under `packs/`, keep that pack's entries in the pack's own manifest and docs. Do not fold optional pack skills into the canonical base manifest.
+
 ## Project-Local Skills
 
 | Skill | Layer | Status | Path | Purpose |

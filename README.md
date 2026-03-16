@@ -11,6 +11,7 @@ This repository exists to standardize the minimum durable structure for Codex sk
 - manifest and index files for discovery
 - templates for future skill authoring and project adoption
 - documentation that explains how to extend the kit without polluting the base layer
+- optional extension packs that can add specialized guidance without changing the base layer
 
 ## Canonical Layer Model
 
@@ -41,6 +42,9 @@ templates/
   agents/
   manifests/
   docs/
+
+packs/
+  skill-development/
 
 docs/
   architecture/
@@ -80,8 +84,18 @@ STARTER_KIT_MANIFEST.md
 1. Copy the starter kit into a new repository.
 2. Keep the base skills intact as the canonical reusable layer.
 3. Tailor the root `AGENTS.md`, onboarding docs, and manifests to the adopting project.
-4. Add project-local skills beside the base layer, or add technology packs under a separate namespace such as `packs/<pack-name>/`.
+4. Add project-local skills beside the base layer, or add optional packs under a separate namespace such as `packs/<pack-name>/`.
 5. Update the manifest and index whenever the available skills change.
+
+## Optional Packs
+
+Optional packs are additive extensions. They are useful when a repository needs reusable guidance that should not become part of the canonical base layer.
+
+- packs are not canonical base content
+- packs must not relabel or replace canonical base skills
+- packs must maintain their own manifest, index, and supporting docs
+
+This repository now includes `packs/skill-development/` as a documentation-first example of an extension pack for skill authoring, review, and description improvement.
 
 ## What This Repository Intentionally Excludes
 
@@ -101,6 +115,7 @@ Those concerns belong either in the adopting repository or in separate add-on pa
 - `.codex/skills/skills-index.md` is the quick catalog for discovery.
 - `templates/skill-template/SKILL.md` is the canonical authoring template.
 - `STARTER_KIT_MANIFEST.md` defines what is canonical in this repository.
+- `packs/skill-development/README.md` explains the optional skill-development extension pack.
 
 ## Suggested Next Iteration
 
@@ -108,4 +123,4 @@ Reasonable v1.1 improvements include:
 
 - automated validation for manifest and section consistency
 - optional agent metadata generation for skills
-- separate technology packs that build on the base kit without changing it
+- additional packs that build on the base kit without changing it

@@ -19,3 +19,7 @@ The canonical base skills are assumed to have been copied into the real reposito
 2. customize repository guidance and onboarding
 3. register local additions in the manifest and index
 4. add project-local skills outside the canonical base folders
+
+## Optional Pack Note
+
+An adopting repository may also attach an optional extension under `packs/`, such as `packs/skill-development/`, when it needs extra guidance without folding that guidance into the canonical base layer. Pack skills should keep their own pack manifest and docs instead of being merged into the canonical base manifest.
