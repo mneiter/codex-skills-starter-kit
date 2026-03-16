@@ -56,12 +56,12 @@ The following repository elements are canonical:
 - tooling and schemas that validate the shared skill system
 - templates and documentation that help teams adopt and extend the starter kit
 - examples that demonstrate usage without encoding project-specific logic
-- empty pack scaffolds that reserve extension points without shipping technology-specific skill content
+- empty direct-pack and leaf-pack scaffolds that reserve extension points without shipping specialized skill content
 
 ### What Must Stay Out Of The Base Kit
 
 - framework-specific or language-specific skill content inside the canonical base layer
-- populated frontend-only, backend-only, infrastructure-only, or vendor-tied pack content unless it is intentionally added as an extension pack
+- populated specialized pack content unless it is intentionally added as an extension pack
 - project-specific business logic, domain rules, or organization policies
 - local repository commands, scripts, or workflows that assume a specific toolchain
 
@@ -70,8 +70,11 @@ The following repository elements are canonical:
 Future packs must be added without polluting the canonical base layer.
 
 - Packs are extensions, not canonical base content.
-- Place technology-specific packs under a separate namespace such as `packs/<pack-name>/`, or publish them in a separate repository.
-- Give each pack its own manifest, index, and supporting documentation.
+- Use a direct pack at `packs/<pack-name>/` for cross-cutting workflows such as `packs/skill-development/`.
+- Use a solution group at `packs/<group>/` as a lightweight container only.
+- Use a leaf pack at `packs/<group>/<pack-name>/` for specialized packs such as `packs/frontend/angular/` or `packs/backend/python/`.
+- Give each direct pack and leaf pack its own manifest, index, and supporting documentation.
+- Keep solution groups lightweight and limited to `README.md`.
 - Packs must not modify, rename, or relabel canonical base skills to fit a pack.
 - Empty pack scaffolds are allowed as canonical infrastructure, but their future skill content remains non-canonical extension material.
 - Treat the base kit as the shared foundation and packs as additive extensions.

@@ -1,6 +1,6 @@
-# Skill Development Pack Index
+# Skill Development Direct Pack Index
 
-This index is a quick catalog of the optional skills in `packs/skill-development/`.
+This index is a quick catalog of the optional skills in the direct pack `packs/skill-development/`.
 
 ## author-skill
 

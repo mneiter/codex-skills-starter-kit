@@ -1,8 +1,8 @@
-# Skill Development Pack
+# Skill Development Direct Pack
 
 ## Purpose
 
-This pack is an optional extension for repositories that want extra guidance around creating, reviewing, and refining skills. It is not part of the canonical base layer.
+This direct pack lives at `packs/skill-development/`. It is an optional extension for repositories that want extra guidance around creating, reviewing, and refining skills. It is not part of the canonical base layer.
 
 ## When To Use This Pack
 
@@ -28,6 +28,7 @@ Do not use this pack for:
 - This pack is an extension, not canonical base content.
 - It must not relabel, replace, or modify the canonical base skills under `.codex/skills/`.
 - It maintains its own manifest, index, references, and templates.
+- It remains a direct pack rather than being placed inside a solution group because it is a cross-cutting workflow capability.
 
 ## Included Skills
 

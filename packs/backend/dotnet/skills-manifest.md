@@ -1,6 +1,6 @@
-# Python Pack Manifest
+# .NET Leaf Pack Manifest
 
-This manifest tracks skills in `packs/python/`.
+This manifest tracks skills in `packs/backend/dotnet/`.
 
 ## Status Values
 
@@ -11,7 +11,7 @@ This manifest tracks skills in `packs/python/`.
 
 ## Skills
 
-No Python pack skills have been added yet.
+No .NET leaf pack skills have been added yet.
 
 | Skill | Layer | Status | Path | Purpose |
 | --- | --- | --- | --- | --- |

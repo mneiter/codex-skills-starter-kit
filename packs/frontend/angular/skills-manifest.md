@@ -1,6 +1,6 @@
-# Angular Pack Manifest
+# Angular Leaf Pack Manifest
 
-This manifest tracks skills in `packs/angular/`.
+This manifest tracks skills in `packs/frontend/angular/`.
 
 ## Status Values
 
@@ -11,7 +11,7 @@ This manifest tracks skills in `packs/angular/`.
 
 ## Skills
 
-No Angular pack skills have been added yet.
+No Angular leaf pack skills have been added yet.
 
 | Skill | Layer | Status | Path | Purpose |
 | --- | --- | --- | --- | --- |

@@ -1,6 +1,6 @@
 # Codex Skills Starter Kit
 
-`codex-skills-starter-kit` is a reusable foundation repository for storing technology-agnostic Codex skills. It provides a clean base layer that can be copied into future projects and then extended with project-local skills or separate technology packs.
+`codex-skills-starter-kit` is a reusable foundation repository for storing technology-agnostic Codex skills. It provides a clean base layer that can be copied into future projects and then extended with project-local skills, direct packs, or specialized packs organized under solution groups.
 
 ## Purpose
 
@@ -50,10 +50,17 @@ templates/
   docs/
 
 packs/
-  angular/
-  devops/
-  python/
-  react/
+  backend/
+    README.md
+    dotnet/
+    python/
+  frontend/
+    README.md
+    angular/
+    react/
+  platform/
+    README.md
+    devops/
   skill-development/
 
 docs/
@@ -103,26 +110,36 @@ STARTER_KIT_MANIFEST.md
 1. Copy the starter kit into a new repository.
 2. Keep the base skills intact as the canonical reusable layer.
 3. Tailor the root `AGENTS.md`, onboarding docs, and manifests to the adopting project.
-4. Add project-local skills beside the base layer, or add optional packs under a separate namespace such as `packs/<pack-name>/`.
+4. Add project-local skills beside the base layer, or add optional extensions as either direct packs like `packs/skill-development/` or leaf packs such as `packs/frontend/angular/`.
 5. Update the manifest and index whenever the available skills change.
 
 ## Optional Packs
 
 Optional packs are additive extensions. They are useful when a repository needs reusable guidance that should not become part of the canonical base layer.
 
+Use these canonical terms:
+
+- `base skills`: `.codex/skills/`
+- `direct pack`: `packs/<pack-name>/`
+- `solution group`: `packs/<group>/`
+- `leaf pack`: `packs/<group>/<pack-name>/`
+
 - packs are not canonical base content
 - packs must not relabel or replace canonical base skills
 - packs must maintain their own manifest, index, and supporting docs
 
-This repository now includes `packs/skill-development/` as a documentation-first example of an extension pack for skill authoring, review, and description improvement.
-It also includes empty pack scaffolds for `angular`, `react`, `python`, and `devops` so future technology-specific skills can be added without changing the base layer.
+This repository now includes:
+
+- the direct pack `packs/skill-development/`
+- the solution groups `packs/frontend/`, `packs/backend/`, and `packs/platform/`
+- the leaf packs `packs/frontend/angular/`, `packs/frontend/react/`, `packs/backend/python/`, `packs/backend/dotnet/`, and `packs/platform/devops/`
 
 ## What This Repository Intentionally Excludes
 
 This starter kit does not ship:
 
 - framework-specific skills in the canonical base layer
-- populated frontend-specific, backend-specific, or vendor-specific pack content
+- populated specialized pack content that does not belong in this starter-kit repository
 - vendor-specific workflows
 - project-specific business context
 - CI pipelines, licenses, or issue templates
@@ -137,7 +154,7 @@ Those concerns belong either in the adopting repository or in separate add-on pa
 - `STARTER_KIT_MANIFEST.md` defines what is canonical in this repository.
 - `docs/skills/skill-metadata.md` defines the normalized metadata contract for skills.
 - `docs/skills/validation.md` explains the repository validation workflow.
-- `docs/packs/architecture.md` explains how technology packs extend the starter kit.
+- `docs/packs/architecture.md` explains how direct packs, solution groups, and leaf packs extend the starter kit.
 - `scripts/validate-skills` runs the skill validator.
 - `packs/skill-development/README.md` explains the optional skill-development extension pack.
 
@@ -148,4 +165,4 @@ Reasonable v1.1 improvements include:
 - external skill import workflow
 - optional agent metadata generation for skills
 - richer validation reporting or test fixtures
-- populated technology packs that build on the base kit without changing it
+- populated leaf packs that build on the base kit without changing it

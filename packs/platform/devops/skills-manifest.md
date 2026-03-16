@@ -1,6 +1,6 @@
-# DevOps Pack Manifest
+# DevOps Leaf Pack Manifest
 
-This manifest tracks skills in `packs/devops/`.
+This manifest tracks skills in `packs/platform/devops/`.
 
 ## Status Values
 
@@ -11,7 +11,7 @@ This manifest tracks skills in `packs/devops/`.
 
 ## Skills
 
-No DevOps pack skills have been added yet.
+No DevOps leaf pack skills have been added yet.
 
 | Skill | Layer | Status | Path | Purpose |
 | --- | --- | --- | --- | --- |
