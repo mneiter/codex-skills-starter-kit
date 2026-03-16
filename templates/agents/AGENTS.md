@@ -31,5 +31,6 @@ These rules define how Codex should operate in a downstream repository that adop
 ## Skill Extension Rules
 
 - Keep copied base skills generic.
-- Add project-local or technology-specific skills outside the canonical base layer.
+- Add reusable extensions under `.codex/skills/plugins/`.
+- Add repository-specific skills under `.codex/skills/project/`.
 - Prefer small composable skills over large multi-purpose skills.

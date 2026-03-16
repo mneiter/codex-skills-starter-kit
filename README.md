@@ -1,162 +1,106 @@
 # Codex Skills Starter Kit
 
-`codex-skills-starter-kit` is a reusable foundation repository for storing technology-agnostic Codex skills. It provides a clean base layer that can be copied into future projects and then extended with project-local skills, direct packs, or specialized packs organized under solution groups.
+`codex-skills-starter-kit` is a reusable foundation repository for Codex skills. It keeps every discoverable skill under `.codex/skills`, separates canonical base skills from reusable plugins and project-specific skills, and makes the root skill registries the single global discovery surface for agents.
 
 ## Purpose
 
-This repository exists to standardize the minimum durable structure for Codex skills:
+This repository exists to standardize a durable, reusable skill system:
 
-- a canonical three-layer skill architecture
-- a small base set of reusable skills
-- manifest and index files for discovery
-- templates for future skill authoring and project adoption
-- documentation that explains how to extend the kit without polluting the base layer
-- optional extension packs that can add specialized guidance without changing the base layer
+- a canonical three-layer base architecture
+- a global manifest and index for skill discovery
+- reusable plugins that stay outside the base layer
+- a reserved project area for repository-specific skills
+- validation tooling, templates, and docs that keep the structure consistent
 
 ## Release Status
 
 - `v1.0.0` is the first stable baseline of `codex-skills-starter-kit`.
-- `main` continues as the active development line for the next iteration, `v1.1.0`.
-- `release/1.0.0` represents the frozen baseline for the first stable version.
+- `main` continues as the active development line for `v1.1.0`.
+- `release/1.0.0` is the frozen baseline for the first stable version.
 
-## Canonical Layer Model
+## Canonical Skill Architecture
 
-The base kit organizes skills into three layers:
-
-1. `orchestration`
-   Coordinate intake, routing, sequencing, and handoff between other skills.
-2. `guardrails`
-   Keep execution safe, reviewable, and bounded through shared verification and operating rules.
-3. `atomic`
-   Handle focused reusable tasks such as validation, test creation, refactoring, and pull request drafting.
-
-This separation keeps responsibilities clear and makes the skill system easier to extend without turning a single skill into an unstructured workflow bundle.
-
-## Repository Structure
+The repository now uses one canonical structure:
 
 ```text
 .codex/
   skills/
-    orchestration/
-    guardrails/
-    atomic/
+    base/
+      orchestration/
+      guardrails/
+      atomic/
+    plugins/
+      backend/
+      frontend/
+      platform/
+      skill-development/
+    project/
     skills-manifest.md
     skills-index.md
-
-templates/
-  skill-template/
-  agents/
-  manifests/
-  docs/
-
-packs/
-  backend/
-    README.md
-    dotnet/
-    python/
-  frontend/
-    README.md
-    angular/
-    react/
-  platform/
-    README.md
-    devops/
-  skill-development/
-
-docs/
-  architecture/
-  conventions/
-  packs/
-  releases/
-  skills/
-  workflows/
-
-scripts/
-  validate-skills
-
-tools/
-  skill-validator/
-
-examples/
-  minimal-project/
-
-AGENTS.md
-README.md
-STARTER_KIT_MANIFEST.md
 ```
 
-## Base Skills
+### Base Skills
 
-### Orchestration
+Base skills are the shared foundation. They stay technology-agnostic and remain the only skills that belong in the canonical reusable starter kit.
 
-- `task-intake-supervisor`
-- `skill-router`
+The base layer keeps the responsibility model:
 
-### Guardrails
+1. `orchestration`
+2. `guardrails`
+3. `atomic`
 
-- `execution-memory-loop`
-- `review-and-repair-loop`
-- `shared-boundary-guardrails`
+### Plugins
 
-### Atomic
+Plugins are reusable extensions that stay outside the base layer.
 
-- `ci-verification`
-- `generate-pull-request`
-- `refactor-feature`
-- `unit-tests`
+- actual plugins live under `.codex/skills/plugins/...`
+- plugin groups such as `frontend`, `backend`, and `platform` are organizational containers only
+- only plugins with real skills are registered in the root manifest and index
+
+This repository currently includes:
+
+- the actual plugin `.codex/skills/plugins/skill-development/`
+- the plugin groups `.codex/skills/plugins/frontend/`, `.codex/skills/plugins/backend/`, and `.codex/skills/plugins/platform/`
+- empty plugin scaffolds for future specialized plugins under those groups
+
+### Project Skills
+
+Project-specific skills belong under `.codex/skills/project/`. They are not part of the reusable base layer, but they still use the same responsibility tokens:
+
+- `orchestration`
+- `guardrails`
+- `atomic`
 
 ## How To Use This Repository
 
 1. Copy the starter kit into a new repository.
-2. Keep the base skills intact as the canonical reusable layer.
-3. Tailor the root `AGENTS.md`, onboarding docs, and manifests to the adopting project.
-4. Add project-local skills beside the base layer, or add optional extensions as either direct packs like `packs/skill-development/` or leaf packs such as `packs/frontend/angular/`.
-5. Update the manifest and index whenever the available skills change.
-
-## Optional Packs
-
-Optional packs are additive extensions. They are useful when a repository needs reusable guidance that should not become part of the canonical base layer.
-
-Use these canonical terms:
-
-- `base skills`: `.codex/skills/`
-- `direct pack`: `packs/<pack-name>/`
-- `solution group`: `packs/<group>/`
-- `leaf pack`: `packs/<group>/<pack-name>/`
-
-- packs are not canonical base content
-- packs must not relabel or replace canonical base skills
-- packs must maintain their own manifest, index, and supporting docs
-
-This repository now includes:
-
-- the direct pack `packs/skill-development/`
-- the solution groups `packs/frontend/`, `packs/backend/`, and `packs/platform/`
-- the leaf packs `packs/frontend/angular/`, `packs/frontend/react/`, `packs/backend/python/`, `packs/backend/dotnet/`, and `packs/platform/devops/`
+2. Keep the base skills intact under `.codex/skills/base/`.
+3. Tailor the root `AGENTS.md`, onboarding docs, and root registries to the adopting project.
+4. Add reusable extensions under `.codex/skills/plugins/` when they should stay outside the canonical base layer.
+5. Add repository-specific skills under `.codex/skills/project/`.
+6. Update `.codex/skills/skills-manifest.md` and `.codex/skills/skills-index.md` whenever the available skills change.
 
 ## What This Repository Intentionally Excludes
 
 This starter kit does not ship:
 
-- framework-specific skills in the canonical base layer
-- populated specialized pack content that does not belong in this starter-kit repository
-- vendor-specific workflows
-- project-specific business context
+- framework-specific or vendor-specific skills in the canonical base layer
+- project-specific business context in the reusable repository root
 - CI pipelines, licenses, or issue templates
+- compatibility shims for old skill layouts
 
-Those concerns belong either in the adopting repository or in separate add-on packs that do not modify the canonical base layer.
+Those concerns belong either in project skills or in reusable plugins that do not alter the canonical base layer.
 
 ## Key Files
 
-- `.codex/skills/skills-manifest.md` is the canonical active-skill registry.
-- `.codex/skills/skills-index.md` is the quick catalog for discovery.
+- `.codex/skills/skills-manifest.md` is the global skill registry.
+- `.codex/skills/skills-index.md` is the global skill catalog.
 - `templates/skill-template/SKILL.md` is the canonical authoring template.
-- `STARTER_KIT_MANIFEST.md` defines what is canonical in this repository.
-- `docs/skills/skill-metadata.md` defines the normalized metadata contract for skills.
+- `docs/plugins/architecture.md` explains the plugin model.
+- `docs/skills/skill-metadata.md` defines the normalized metadata contract.
 - `docs/skills/validation.md` explains the repository validation workflow.
-- `docs/packs/architecture.md` explains how direct packs, solution groups, and leaf packs extend the starter kit.
-- `scripts/validate-skills` runs the skill validator.
-- `packs/skill-development/README.md` explains the optional skill-development extension pack.
+- `scripts/validate-skills` runs the validator.
+- `STARTER_KIT_MANIFEST.md` defines what is canonical in this repository.
 
 ## Suggested Next Iteration
 
@@ -165,4 +109,4 @@ Reasonable v1.1 improvements include:
 - external skill import workflow
 - optional agent metadata generation for skills
 - richer validation reporting or test fixtures
-- populated leaf packs that build on the base kit without changing it
+- populated plugin skills that build on the base kit without changing it

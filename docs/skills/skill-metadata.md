@@ -51,6 +51,16 @@ Use the repository's existing layer tokens exactly:
 
 The repository uses `guardrails` as the canonical token because it matches the current folder structure and base manifests.
 
+## Scope Model
+
+The repository distinguishes skill scope by location:
+
+- base skills under `.codex/skills/base/`
+- plugin skills under `.codex/skills/plugins/`
+- project skills under `.codex/skills/project/`
+
+Scope does not replace layer classification. A plugin skill or project skill still normalizes to one of the same three layer values.
+
 ## Compatibility Model
 
 The current standard is intentionally incremental:
@@ -58,7 +68,7 @@ The current standard is intentionally incremental:
 - `SKILL.md` frontmatter stays limited to `name` and `description`
 - the required section order stays unchanged
 - existing skills remain valid as long as the normalized fields can be derived
-- pack skills use the same normalized metadata model as canonical base skills
+- plugin skills and project skills use the same normalized metadata model as canonical base skills
 
 ## Authoring Guidance
 

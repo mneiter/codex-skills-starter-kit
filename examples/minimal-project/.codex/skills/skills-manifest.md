@@ -1,6 +1,6 @@
 # Minimal Project Skills Manifest
 
-This example manifest shows how an adopted repository can register local additions without redefining the canonical base layer.
+This example manifest shows how an adopted repository can register local additions without redefining the canonical base layer. In a real adopted repository, this remains the global skill registry.
 
 ## Status Values
 
@@ -13,12 +13,12 @@ This example manifest shows how an adopted repository can register local additio
 
 In a real adopted repository, keep the canonical base manifest copied from the starter kit. This example omits the base entries to stay focused on local extensions.
 
-## Optional Pack Note
+## Optional Plugin Note
 
-If the repository attaches an optional pack under `packs/`, keep that pack's entries in the pack's own manifest and docs. Do not fold optional pack skills into the canonical base manifest.
+If the repository attaches an actual plugin under `.codex/skills/plugins/`, keep that plugin's entries in the plugin's own manifest and docs as well as in the root global manifest. Do not register plugin groups or empty plugin scaffolds.
 
-## Project-Local Skills
+## Skills
 
-| Skill | Layer | Status | Path | Purpose |
-| --- | --- | --- | --- | --- |
-| project-context | project-local | active | `.codex/skills/project-local/project-context/SKILL.md` | Capture repository-specific goals, constraints, and terminology that should not live in the canonical base layer. |
+| Skill | Scope | Layer | Status | Path | Purpose |
+| --- | --- | --- | --- | --- | --- |
+| project-context | project | orchestration | active | `.codex/skills/project/project-context/SKILL.md` | Capture repository-specific goals, constraints, and terminology that should not live in the canonical base layer. |

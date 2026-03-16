@@ -7,7 +7,7 @@ This example repository illustrates how a team can adopt the starter kit and the
 ## Local Constraints
 
 - keep the canonical base skills unchanged unless the starter kit itself is being updated
-- store local knowledge in project-local skills
+- store local knowledge in project skills under `.codex/skills/project/`
 - keep manifests and indexes current when local skills change
 
 ## Validation Paths
@@ -16,7 +16,7 @@ Document the repository's real validation commands here after adoption.
 
 ## Architecture Notes
 
-The base layer comes from the starter kit. Local additions live beside it and should not change the meaning of canonical base skills.
+The base layer comes from the starter kit. Local additions live under `.codex/skills/project/` or `.codex/skills/plugins/` and should not change the meaning of canonical base skills.
 
 ## Local Skill Additions
 
