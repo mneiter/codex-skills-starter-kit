@@ -1,10 +1,10 @@
-# Angular Leaf Pack
+# Angular Plugin Scaffold
 
-This leaf pack lives at `packs/frontend/angular/`. It is a reserved extension point for Angular-specific skills, examples, and supporting documentation.
+This empty plugin scaffold lives at `.codex/skills/plugins/frontend/angular/`. It reserves the future location for Angular-specific skills, examples, and supporting documentation.
 
-## Solution Group
+## Plugin Group
 
-This leaf pack belongs to the `frontend` solution group.
+This scaffold belongs to the `frontend` plugin group.
 
 ## Intended Scope
 
@@ -14,7 +14,7 @@ This leaf pack belongs to the `frontend` solution group.
 
 ## Layer Relationship
 
-Any future skills in this leaf pack still use the canonical responsibility layers:
+Any future skills in this plugin still use the canonical responsibility layers:
 
 - `orchestration`
 - `guardrails`
@@ -24,4 +24,4 @@ Any future skills in this leaf pack still use the canonical responsibility layer
 
 - do not relabel or replace canonical base skills
 - do not add project-specific business rules here
-- keep this leaf pack empty until real Angular-specific extension material is ready
+- keep this location as a README-only scaffold until real Angular-specific skills exist

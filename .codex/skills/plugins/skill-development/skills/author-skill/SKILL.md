@@ -29,14 +29,14 @@ Use this skill when:
 3. Define nearby cases that should not trigger it.
 4. Draft the `SKILL.md` structure with clear inputs, process, outputs, guardrails, verification, and escalation.
 5. Decide whether `scripts/`, `references/`, or `assets/` are needed.
-6. Check whether the skill belongs in the canonical base layer, a project-local area, or a pack.
+6. Check whether the skill belongs in the canonical base layer, the project area, or a reusable plugin.
 
 # Outputs
 
 - a well-scoped skill draft
 - a draft description with trigger and boundary language
 - a recommendation on bundled resources
-- a placement recommendation for base layer, pack, or project-local use
+- a placement recommendation for base layer, plugin, or project use
 
 # Guardrails
 

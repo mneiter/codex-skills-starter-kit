@@ -1,22 +1,22 @@
-# Add A New Pack
+# Add A New Plugin
 
 ## Goal
 
-Use this workflow when extending the repository with a new pack structure.
+Use this workflow when extending the repository with a new reusable plugin.
 
-## Step 1: Choose The Right Pack Form
+## Step 1: Choose The Right Plugin Placement
 
-Create a direct pack at `packs/<pack-name>/` when the pack:
+Create a top-level plugin at `.codex/skills/plugins/<plugin-name>/` when the plugin:
 
 - represents a cross-cutting capability
 - represents a workflow
-- is not naturally tied to one solution group
+- is not naturally tied to one plugin group
 
 Canonical example:
 
-- `packs/skill-development/`
+- `.codex/skills/plugins/skill-development/`
 
-Create a leaf pack at `packs/<group>/<pack-name>/` when the pack clearly belongs to a functional area such as:
+Create a grouped plugin at `.codex/skills/plugins/<group>/<plugin-name>/` when the plugin clearly belongs to a functional area such as:
 
 - frontend
 - backend
@@ -26,44 +26,48 @@ Create a leaf pack at `packs/<group>/<pack-name>/` when the pack clearly belongs
 
 Canonical examples:
 
-- `packs/frontend/angular/`
-- `packs/frontend/react/`
-- `packs/backend/python/`
-- `packs/backend/dotnet/`
-- `packs/platform/devops/`
+- `.codex/skills/plugins/frontend/angular/`
+- `.codex/skills/plugins/frontend/react/`
+- `.codex/skills/plugins/backend/python/`
+- `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/devops/`
 
-## Step 2: Create A Solution Group When Needed
+## Step 2: Create A Plugin Group When Needed
 
-If the solution group does not exist yet:
+If the plugin group does not exist yet:
 
-- create `packs/<group>/`
-- add only `README.md` at the solution-group root
-- do not add `skills-manifest.md` or `skills-index.md` at the solution-group root
+- create `.codex/skills/plugins/<group>/`
+- add only `README.md` at the plugin-group root
+- do not add `plugin-manifest.md` or `plugin-index.md` at the plugin-group root
 
-## Step 3: Create The Pack Root
+## Step 3: Create The Plugin Root
 
-For a direct pack or leaf pack, create:
+For an actual plugin root with real skills, create:
 
 - `README.md`
-- `skills-manifest.md`
-- `skills-index.md`
-
-Optional directories may be added only when the pack has real content:
-
+- `plugin-manifest.md`
+- `plugin-index.md`
 - `skills/`
+
+Optional directories may be added only when the plugin has real content:
+
 - `examples/`
 - `docs/`
 - `rules/`
+- `references/`
+- `templates/`
+
+If the plugin is only a future placeholder with no real skills yet, keep it as a README-only scaffold and do not register it globally.
 
 ## Step 4: Keep The Layer Model Independent
 
-- do not treat pack placement as a replacement for layer classification
-- any skill added to a direct pack or leaf pack still uses `orchestration`, `guardrails`, or `atomic`
-- do not modify canonical base skills just to fit a pack
+- do not treat plugin placement as a replacement for layer classification
+- any skill added to a plugin still uses `orchestration`, `guardrails`, or `atomic`
+- do not modify canonical base skills just to fit a plugin
 
 ## Step 5: Validate
 
 - run `scripts/validate-skills`
-- confirm the solution group is treated only as a container
-- confirm the direct pack or leaf pack manifest and index match the real skill folders
+- confirm the plugin group is treated only as a container
+- confirm the actual plugin manifest and index match the real skill folders
 - confirm duplicate skill names were not introduced

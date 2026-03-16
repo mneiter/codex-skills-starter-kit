@@ -1,6 +1,6 @@
-# Skill Development Direct Pack Index
+# Skill Development Plugin Index
 
-This index is a quick catalog of the optional skills in the direct pack `packs/skill-development/`.
+This index is a quick catalog of the optional skills in the plugin `.codex/skills/plugins/skill-development/`.
 
 ## author-skill
 

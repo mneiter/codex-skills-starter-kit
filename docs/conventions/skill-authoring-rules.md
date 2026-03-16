@@ -64,7 +64,7 @@ Each skill should have one primary responsibility. If a skill starts combining c
 - Do not embed framework-specific, vendor-specific, or project-specific assumptions into the base layer.
 - Prefer concise instructions over long narrative explanations.
 - Add supporting templates or references only when they are genuinely reusable.
-- Place optional extensions in `packs/` instead of widening the canonical base layer.
+- Place reusable extensions in `.codex/skills/plugins/` instead of widening the canonical base layer.
 
 ## Progressive Disclosure Rules
 
@@ -104,4 +104,4 @@ Each skill should have one primary responsibility. If a skill starts combining c
 - Update the manifest and index whenever a skill is added, renamed, deprecated, or retired.
 - Keep documentation aligned with the actual repository structure.
 - Do not let examples become alternate sources of truth for the canonical base layer.
-- Run `scripts/validate-skills` after changing skills, manifests, indexes, or pack structure.
+- Run `scripts/validate-skills` after changing skills, manifests, indexes, plugin structure, or project skill locations.

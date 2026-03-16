@@ -14,7 +14,7 @@ Add a new skill only if the work cannot be cleanly handled by the current catalo
 - use `guardrails` for boundaries, review loops, or persistent execution discipline
 - use `atomic` for one focused repeatable task
 
-If the skill does not fit the base layer cleanly, place it in a project-local area or in a separate pack. Do not widen the canonical base layer just because a workflow is useful in one class of projects.
+If the skill does not fit the base layer cleanly, place it under `.codex/skills/project/` or inside a reusable plugin under `.codex/skills/plugins/`. Do not widen the canonical base layer just because a workflow is useful in one class of projects.
 
 ## Step 3: Author The Skill
 
@@ -36,8 +36,9 @@ If the skill does not fit the base layer cleanly, place it in a project-local ar
 
 ## Step 5: Register The Skill
 
-- add the skill to the correct manifest with the right layer, status, path, and purpose
-- add the skill to the correct index with layer, purpose, and when-to-use summary
+- add the skill to the root `.codex/skills/skills-manifest.md` with the right scope, layer, status, path, and purpose
+- add the skill to the root `.codex/skills/skills-index.md` with scope, layer, purpose, and when-to-use summary
+- if the skill lives inside an actual plugin, also update that plugin's `plugin-manifest.md` and `plugin-index.md`
 - update any relevant documentation or onboarding material
 
 ## Step 6: Validate The Repository
@@ -51,7 +52,7 @@ If the skill does not fit the base layer cleanly, place it in a project-local ar
 - confirm the skill does not pollute the base layer with project-specific or technology-specific assumptions
 - confirm the skill is not duplicating a neighboring skill
 - confirm the skill remains small enough to compose with others
-- confirm it belongs in the base layer rather than in a pack or project-local area
+- confirm it belongs in the base layer rather than in a plugin or project area
 
 ## Step 8: Maintain Over Time
 

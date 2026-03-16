@@ -8,7 +8,7 @@ These rules illustrate how an adopting repository can localize Codex guidance wi
 
 - Learn the repository shape before editing.
 - Prefer small reviewable changes.
-- Keep project-local guidance in local files instead of modifying the shared base skills.
+- Keep project guidance in `.codex/skills/project/` instead of modifying the shared base skills.
 
 ## Documentation Expectations
 

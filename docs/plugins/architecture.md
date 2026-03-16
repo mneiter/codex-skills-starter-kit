@@ -1,121 +1,112 @@
-# Pack Architecture
+# Plugin Architecture
 
 ## Purpose
 
-Packs are the repository's second organizational axis. They let specialized skill content grow without changing the canonical base skills under `.codex/skills/`.
+Plugins are the reusable extension area under `.codex/skills/plugins/`. They let specialized skill content grow without changing the canonical base skills under `.codex/skills/base/`.
 
-## Canonical Terms
+## Core Terms
 
 Use these terms consistently:
 
 - `base skills`
-  - `.codex/skills/`
-- `direct pack`
-  - `packs/<pack-name>/`
-- `solution group`
-  - `packs/<group>/`
-- `leaf pack`
-  - `packs/<group>/<pack-name>/`
+  - `.codex/skills/base/`
+- `plugin`
+  - `.codex/skills/plugins/<plugin-name>/`
+  - or `.codex/skills/plugins/<group>/<plugin-name>/`
+- `plugin group`
+  - `.codex/skills/plugins/<group>/`
+- `project skills`
+  - `.codex/skills/project/`
 
-## Two-Axis Model
+## Responsibility And Scope
 
-The repository uses two complementary axes:
+The repository keeps two separate ideas:
 
 1. responsibility layer
    - `orchestration`
    - `guardrails`
    - `atomic`
-2. pack organization
-   - direct packs
-   - solution groups
-   - leaf packs
+2. skill scope
+   - base skills
+   - plugins
+   - project skills
 
-Layer and pack are not the same thing:
+Layer describes what a skill does. Scope describes where it belongs. Plugins and project skills still use the same three responsibility layers as base skills.
 
-- layer describes what responsibility a skill performs
-- pack placement describes where specialized content belongs organizationally
-- a leaf pack may contain orchestration, guardrails, and atomic skills
-- pack placement never replaces layer classification
+## Plugin Group Rules
 
-## Classification Rules
-
-### When To Create A Direct Pack
-
-Use a direct pack at `packs/<pack-name>/` when the pack:
-
-- represents a cross-cutting capability
-- represents a workflow
-- is not naturally tied to a single solution group
-
-Canonical example:
-
-- `packs/skill-development/`
-
-### When To Create A Solution Group And Leaf Pack
-
-Use a solution group plus a leaf pack when the pack clearly belongs to a functional area such as:
-
-- frontend
-- backend
-- platform
-- ai
-- data
-
-Canonical examples:
-
-- `packs/frontend/angular/`
-- `packs/frontend/react/`
-- `packs/backend/python/`
-- `packs/backend/dotnet/`
-- `packs/platform/devops/`
-
-## Structure Rules
-
-### Solution Group
-
-A solution group is a lightweight organizational container.
+A plugin group is an organizational container only.
 
 It must:
 
 - contain only `README.md`
-- not contain `skills-manifest.md`
-- not contain `skills-index.md`
-- not be treated as a pack root
+- not contain `plugin-manifest.md`
+- not contain `plugin-index.md`
+- not appear in the root skill registries
+- not be treated as a plugin root by the validator
 
-### Direct Pack And Leaf Pack
+## Actual Plugin Rules
 
-Every direct pack or leaf pack should contain:
+An actual plugin root is a directory that contains real skills.
+
+It must contain:
 
 - `README.md`
-- `skills-manifest.md`
-- `skills-index.md`
+- `plugin-manifest.md`
+- `plugin-index.md`
+- `skills/`
 
-Optional directories may be added when the pack has real content:
+Optional directories may be added when the plugin has supporting material:
 
 ```text
-pack-root/
+plugin-root/
   README.md
-  skills-manifest.md
-  skills-index.md
+  plugin-manifest.md
+  plugin-index.md
   skills/
-  examples/
+  references/
+  templates/
   docs/
   rules/
+  examples/
 ```
+
+## Empty Plugin Scaffolds
+
+An empty plugin scaffold is a future plugin location with no actual skills yet.
+
+It may contain:
+
+- `README.md`
+
+It must not contain:
+
+- `plugin-manifest.md`
+- `plugin-index.md`
+
+Empty plugin scaffolds are valid structural placeholders, but they are not globally registered until they contain real skills.
+
+## Placement Rules
+
+Use a top-level plugin at `.codex/skills/plugins/<plugin-name>/` when the extension is cross-cutting or not naturally tied to one plugin group.
+
+Canonical example:
+
+- `.codex/skills/plugins/skill-development/`
+
+Use a plugin group plus a grouped plugin path when the extension clearly belongs to a functional area.
+
+Canonical examples:
+
+- `.codex/skills/plugins/frontend/angular/`
+- `.codex/skills/plugins/frontend/react/`
+- `.codex/skills/plugins/backend/python/`
+- `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/devops/`
 
 ## Boundaries
 
-- packs are extensions, not canonical base content
-- packs must not relabel, replace, or absorb canonical base skills
-- base skills stay independent from packs
-- direct packs and leaf packs maintain their own manifests, indexes, and supporting docs
-
-## Current Canonical Examples
-
-- direct pack: `packs/skill-development/`
-- solution group: `packs/frontend/`
-- leaf pack: `packs/frontend/angular/`
-- leaf pack: `packs/frontend/react/`
-- leaf pack: `packs/backend/python/`
-- leaf pack: `packs/backend/dotnet/`
-- leaf pack: `packs/platform/devops/`
+- plugins are reusable extensions, not canonical base content
+- plugins must not relabel, replace, or absorb canonical base skills
+- the root `.codex/skills/skills-manifest.md` and `.codex/skills/skills-index.md` remain the single global discovery surface
+- plugin-local catalogs supplement discovery inside an actual plugin, but they do not replace the root registries

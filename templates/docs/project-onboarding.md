@@ -22,7 +22,7 @@ Summarize the important parts of the repository structure that Codex should lear
 
 ## Local Skill Additions
 
-Document any project-local skills or pack-based extensions that exist in addition to the canonical base skills.
+Document any project skills or plugin-based extensions that exist in addition to the canonical base skills.
 
 ## Handoff Expectations
 

@@ -1,6 +1,6 @@
 # Skills Manifest Template
 
-Use this template to register available skills in an adopting repository.
+Use this template to register available skills in an adopting repository. This file is the global registry for all actual skills under `.codex/skills/`.
 
 ## Status Values
 
@@ -11,9 +11,9 @@ Use this template to register available skills in an adopting repository.
 
 ## Skills
 
-| Skill | Layer | Status | Path | Purpose |
-| --- | --- | --- | --- | --- |
-| example-skill-name | atomic | active | `.codex/skills/atomic/example-skill-name/SKILL.md` | Replace this row with the skill's concise purpose. |
+| Skill | Scope | Layer | Status | Path | Purpose |
+| --- | --- | --- | --- | --- | --- |
+| example-skill-name | base | atomic | active | `.codex/skills/base/atomic/example-skill-name/SKILL.md` | Replace this row with the skill's concise purpose. |
 
 ## Maintenance Notes
 

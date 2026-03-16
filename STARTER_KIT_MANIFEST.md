@@ -8,15 +8,16 @@ This document defines the canonical contents and boundaries of `codex-skills-sta
 
 The following repository elements are canonical:
 
-- the three base skill layers under `.codex/skills/`
+- the three base skill layers under `.codex/skills/base/`
 - the nine base skills shipped in those layers
-- `.codex/skills/skills-manifest.md` as the canonical registry
-- `.codex/skills/skills-index.md` as the quick discovery catalog
+- `.codex/skills/skills-manifest.md` as the global skill registry
+- `.codex/skills/skills-index.md` as the global discovery catalog
+- the plugin scaffolding and plugin documentation under `.codex/skills/plugins/` and `docs/plugins/`
+- the reserved project area under `.codex/skills/project/`
 - the validation entrypoint at `scripts/validate-skills`
 - the validator tooling and schema under `tools/skill-validator/`
 - the starter templates under `templates/`
 - the architecture, conventions, and workflow documentation under `docs/`
-- the pack scaffolding and pack documentation under `packs/` and `docs/packs/`
 - the minimal adoption example under `examples/minimal-project/`
 - the root `README.md` and `AGENTS.md`
 
@@ -56,28 +57,29 @@ The following repository elements are canonical:
 - tooling and schemas that validate the shared skill system
 - templates and documentation that help teams adopt and extend the starter kit
 - examples that demonstrate usage without encoding project-specific logic
-- empty direct-pack and leaf-pack scaffolds that reserve extension points without shipping specialized skill content
+- plugin scaffolding that reserves reusable extension points without changing base skills
+- the reserved `project/` location that shows where project-specific skills belong
 
 ### What Must Stay Out Of The Base Kit
 
 - framework-specific or language-specific skill content inside the canonical base layer
-- populated specialized pack content unless it is intentionally added as an extension pack
+- project-specific content inside the reusable base layer
 - project-specific business logic, domain rules, or organization policies
 - local repository commands, scripts, or workflows that assume a specific toolchain
 
-### Future Pack Policy
+### Future Plugin Policy
 
-Future packs must be added without polluting the canonical base layer.
+Future plugins must be added without polluting the canonical base layer.
 
-- Packs are extensions, not canonical base content.
-- Use a direct pack at `packs/<pack-name>/` for cross-cutting workflows such as `packs/skill-development/`.
-- Use a solution group at `packs/<group>/` as a lightweight container only.
-- Use a leaf pack at `packs/<group>/<pack-name>/` for specialized packs such as `packs/frontend/angular/` or `packs/backend/python/`.
-- Give each direct pack and leaf pack its own manifest, index, and supporting documentation.
-- Keep solution groups lightweight and limited to `README.md`.
-- Packs must not modify, rename, or relabel canonical base skills to fit a pack.
-- Empty pack scaffolds are allowed as canonical infrastructure, but their future skill content remains non-canonical extension material.
-- Treat the base kit as the shared foundation and packs as additive extensions.
+- Plugins are extensions, not canonical base content.
+- Use `.codex/skills/plugins/<plugin-name>/` for reusable cross-cutting plugins such as `.codex/skills/plugins/skill-development/`.
+- Use `.codex/skills/plugins/<group>/` as a lightweight plugin group only.
+- Use `.codex/skills/plugins/<group>/<plugin-name>/` for grouped plugin locations such as `.codex/skills/plugins/frontend/angular/` or `.codex/skills/plugins/backend/python/`.
+- Keep plugin groups lightweight and limited to `README.md`.
+- Keep `plugin-manifest.md` and `plugin-index.md` only inside actual plugin roots that contain skills.
+- Plugins must not modify, rename, or relabel canonical base skills to fit a plugin.
+- Empty plugin scaffolds are allowed as canonical infrastructure, but they are not globally registered until they contain skills.
+- Treat the base kit as the shared foundation, plugins as reusable extensions, and `project/` as repository-local space.
 
 ## Maintenance Expectations
 

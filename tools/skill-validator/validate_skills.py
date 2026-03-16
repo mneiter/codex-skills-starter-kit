@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Tuple
 
 
 BASE_LAYERS = ("atomic", "guardrails", "orchestration")
+ROOT_SCOPES = ("base", "plugin", "project")
 BASE_REQUIRED_SECTIONS = (
     "Purpose",
     "When To Use",
@@ -34,8 +35,14 @@ class Issue:
 
 
 @dataclass
-class PackRoot:
-    kind: str
+class RegistrySkill:
+    scope: str
+    path: Path
+    layer_hint: Optional[str]
+
+
+@dataclass
+class PluginRoot:
     name: str
     root: Path
     readme_path: Path
@@ -44,11 +51,12 @@ class PackRoot:
 
 
 @dataclass
-class SolutionGroup:
+class PluginGroup:
     name: str
     root: Path
     readme_path: Path
-    leaf_packs: List[PackRoot]
+    plugin_roots: List[PluginRoot]
+    empty_scaffolds: List[str]
 
 
 def add_issue(issues: List[Issue], severity: str, message: str, path: Optional[Path] = None) -> None:
@@ -312,6 +320,38 @@ def validate_manifest_rows(
     return row_map
 
 
+def validate_root_manifest_rows(
+    discovered: Dict[str, RegistrySkill],
+    rows: List[Dict[str, str]],
+    manifest_path: Path,
+    issues: List[Issue],
+) -> Dict[str, Dict[str, str]]:
+    row_map: Dict[str, Dict[str, str]] = {}
+    names_from_manifest: List[str] = []
+    for row in rows:
+        skill_name = row.get("Skill", "")
+        if not skill_name:
+            continue
+        names_from_manifest.append(skill_name)
+        row_map[skill_name] = row
+
+    if sorted(discovered.keys()) != sorted(names_from_manifest):
+        add_issue(issues, "ERROR", "Root manifest entries do not match discovered skills.", manifest_path)
+
+    for name, skill in discovered.items():
+        row = row_map.get(name)
+        if row is None:
+            continue
+        if row.get("Scope", "") not in ROOT_SCOPES:
+            add_issue(issues, "ERROR", f"Manifest scope for '{name}' is missing or invalid.", manifest_path)
+            continue
+        if row.get("Scope") != skill.scope:
+            add_issue(issues, "ERROR", f"Manifest scope for '{name}' does not match its real location.", manifest_path)
+        if manifest_path_value(row.get("Path", "")) != str(skill.path):
+            add_issue(issues, "ERROR", f"Manifest path for '{name}' does not match the real skill path.", manifest_path)
+    return row_map
+
+
 def validate_index_names(
     discovered: Dict[str, Path],
     index_names: List[str],
@@ -320,19 +360,24 @@ def validate_index_names(
     issues: List[Issue],
 ) -> None:
     if sorted(discovered.keys()) != sorted(index_names):
-        add_issue(
-            issues,
-            "ERROR",
-            f"{scope_name} index headings do not match discovered skill folders.",
-            index_path,
-        )
+        add_issue(issues, "ERROR", f"{scope_name} index headings do not match discovered skill folders.", index_path)
+
+
+def validate_root_index_names(
+    discovered: Dict[str, RegistrySkill],
+    index_names: List[str],
+    index_path: Path,
+    issues: List[Issue],
+) -> None:
+    if sorted(discovered.keys()) != sorted(index_names):
+        add_issue(issues, "ERROR", "Root index headings do not match discovered skills.", index_path)
 
 
 def discover_base(repo_root: Path, issues: List[Issue]) -> Dict[str, Tuple[Path, str]]:
-    base_root = repo_root / ".codex" / "skills"
+    base_root = repo_root / ".codex" / "skills" / "base"
     discovered: Dict[str, Tuple[Path, str]] = {}
     if not base_root.exists():
-        add_issue(issues, "ERROR", "Missing .codex/skills directory.", base_root)
+        add_issue(issues, "ERROR", "Missing .codex/skills/base directory.", base_root)
         return discovered
 
     for layer in BASE_LAYERS:
@@ -351,93 +396,31 @@ def discover_base(repo_root: Path, issues: List[Issue]) -> Dict[str, Tuple[Path,
     return discovered
 
 
-def discover_pack_layout(repo_root: Path, issues: List[Issue]) -> Tuple[List[PackRoot], List[SolutionGroup]]:
-    packs_root = repo_root / "packs"
-    direct_packs: List[PackRoot] = []
-    solution_groups: List[SolutionGroup] = []
-    if not packs_root.exists():
-        return direct_packs, solution_groups
+def discover_project(repo_root: Path, issues: List[Issue]) -> Dict[str, Path]:
+    project_root = repo_root / ".codex" / "skills" / "project"
+    discovered: Dict[str, Path] = {}
+    if not project_root.exists():
+        add_issue(issues, "ERROR", "Missing .codex/skills/project directory.", project_root)
+        return discovered
 
-    for child in sorted(packs_root.iterdir()):
+    for child in sorted(project_root.iterdir()):
+        if child.is_file():
+            continue
         if not child.is_dir():
             continue
-
-        readme_path = child / "README.md"
-        manifest_path = child / "skills-manifest.md"
-        index_path = child / "skills-index.md"
-        child_dirs = [entry for entry in sorted(child.iterdir()) if entry.is_dir()]
-        extra_files = [entry for entry in child.iterdir() if entry.is_file() and entry.name != "README.md"]
-        nested_pack_roots = [
-            entry
-            for entry in child_dirs
-            if (entry / "skills-manifest.md").exists() or (entry / "skills-index.md").exists()
-        ]
-
-        if manifest_path.exists() or index_path.exists():
-            if nested_pack_roots:
-                add_issue(
-                    issues,
-                    "ERROR",
-                    f"Top-level packs entry '{child.name}' mixes direct pack and solution group signals.",
-                    child,
-                )
-            direct_packs.append(
-                PackRoot(
-                    kind="direct pack",
-                    name=child.name,
-                    root=child,
-                    readme_path=readme_path,
-                    manifest_path=manifest_path,
-                    index_path=index_path,
-                )
-            )
+        skill_file = child / "SKILL.md"
+        if not skill_file.exists():
+            add_issue(issues, "ERROR", "Project skill folder is missing SKILL.md.", child)
             continue
-
-        if not readme_path.exists():
-            add_issue(
-                issues,
-                "ERROR",
-                f"Top-level packs entry '{child.name}' must be a direct pack or a solution group with README.md.",
-                child,
-            )
-            continue
-
-        if extra_files:
-            add_issue(
-                issues,
-                "ERROR",
-                f"Solution group '{child.name}' must contain only README.md at its root.",
-                child,
-            )
-
-        leaf_packs: List[PackRoot] = []
-        for subdir in child_dirs:
-            leaf_packs.append(
-                PackRoot(
-                    kind="leaf pack",
-                    name=f"{child.name}/{subdir.name}",
-                    root=subdir,
-                    readme_path=subdir / "README.md",
-                    manifest_path=subdir / "skills-manifest.md",
-                    index_path=subdir / "skills-index.md",
-                )
-            )
-        solution_groups.append(
-            SolutionGroup(
-                name=child.name,
-                root=child,
-                readme_path=readme_path,
-                leaf_packs=leaf_packs,
-            )
-        )
-
-    return direct_packs, solution_groups
+        discovered[child.name] = skill_file.relative_to(repo_root)
+    return discovered
 
 
-def discover_pack_skills(pack_root: PackRoot, repo_root: Path, issues: List[Issue]) -> Dict[str, Path]:
+def discover_plugin_skills(plugin_root: PluginRoot, repo_root: Path, issues: List[Issue]) -> Dict[str, Path]:
     discovered: Dict[str, Path] = {}
-    skills_dir = pack_root.root / "skills"
+    skills_dir = plugin_root.root / "skills"
     if not skills_dir.exists():
+        add_issue(issues, "ERROR", f"Plugin '{plugin_root.name}' is missing its skills directory.", plugin_root.root)
         return discovered
 
     for child in sorted(skills_dir.iterdir()):
@@ -448,64 +431,164 @@ def discover_pack_skills(pack_root: PackRoot, repo_root: Path, issues: List[Issu
             add_issue(issues, "ERROR", "Skill folder is missing SKILL.md.", child)
             continue
         discovered[child.name] = skill_file.relative_to(repo_root)
+    if not discovered:
+        add_issue(issues, "ERROR", f"Plugin '{plugin_root.name}' has no skill folders.", skills_dir)
     return discovered
 
 
-def validate_pack_root(
-    pack_root: PackRoot,
+def has_legacy_plugin_catalogs(path: Path) -> bool:
+    return (path / "skills-manifest.md").exists() or (path / "skills-index.md").exists()
+
+
+def discover_plugins(repo_root: Path, issues: List[Issue]) -> Tuple[List[PluginRoot], List[PluginGroup], List[str]]:
+    plugins_root = repo_root / ".codex" / "skills" / "plugins"
+    actual_plugins: List[PluginRoot] = []
+    plugin_groups: List[PluginGroup] = []
+    empty_top_level_scaffolds: List[str] = []
+
+    if not plugins_root.exists():
+        add_issue(issues, "ERROR", "Missing .codex/skills/plugins directory.", plugins_root)
+        return actual_plugins, plugin_groups, empty_top_level_scaffolds
+
+    for child in plugins_root.iterdir():
+        if child.is_file():
+            continue
+        if not child.is_dir():
+            continue
+
+        if has_legacy_plugin_catalogs(child):
+            add_issue(issues, "ERROR", f"Stale plugin catalog filename found in '{child.name}'.", child)
+
+        readme_path = child / "README.md"
+        manifest_path = child / "plugin-manifest.md"
+        index_path = child / "plugin-index.md"
+        child_dirs = [entry for entry in sorted(child.iterdir()) if entry.is_dir()]
+        extra_files = [entry for entry in child.iterdir() if entry.is_file() and entry.name not in ("README.md", "plugin-manifest.md", "plugin-index.md")]
+
+        if manifest_path.exists() or index_path.exists():
+            if not readme_path.exists():
+                add_issue(issues, "ERROR", f"Plugin '{child.name}' is missing README.md.", child)
+            actual_plugins.append(
+                PluginRoot(
+                    name=child.name,
+                    root=child,
+                    readme_path=readme_path,
+                    manifest_path=manifest_path,
+                    index_path=index_path,
+                )
+            )
+            continue
+
+        if child_dirs:
+            if not readme_path.exists():
+                add_issue(issues, "ERROR", f"Plugin group '{child.name}' is missing README.md.", child)
+            if extra_files:
+                add_issue(issues, "ERROR", f"Plugin group '{child.name}' must contain only README.md at its root.", child)
+
+            grouped_plugins: List[PluginRoot] = []
+            empty_scaffolds: List[str] = []
+            for subdir in child_dirs:
+                if has_legacy_plugin_catalogs(subdir):
+                    add_issue(issues, "ERROR", f"Stale plugin catalog filename found in '{child.name}/{subdir.name}'.", subdir)
+
+                sub_readme = subdir / "README.md"
+                sub_manifest = subdir / "plugin-manifest.md"
+                sub_index = subdir / "plugin-index.md"
+                sub_child_dirs = [entry for entry in subdir.iterdir() if entry.is_dir()]
+                sub_extra_files = [
+                    entry
+                    for entry in subdir.iterdir()
+                    if entry.is_file() and entry.name not in ("README.md", "plugin-manifest.md", "plugin-index.md")
+                ]
+
+                if sub_manifest.exists() or sub_index.exists():
+                    if not sub_readme.exists():
+                        add_issue(issues, "ERROR", f"Plugin '{child.name}/{subdir.name}' is missing README.md.", subdir)
+                    grouped_plugins.append(
+                        PluginRoot(
+                            name=f"{child.name}/{subdir.name}",
+                            root=subdir,
+                            readme_path=sub_readme,
+                            manifest_path=sub_manifest,
+                            index_path=sub_index,
+                        )
+                    )
+                    continue
+
+                if not sub_readme.exists():
+                    add_issue(issues, "ERROR", f"Empty plugin scaffold '{child.name}/{subdir.name}' is missing README.md.", subdir)
+                if sub_child_dirs or sub_extra_files:
+                    add_issue(
+                        issues,
+                        "ERROR",
+                        f"Empty plugin scaffold '{child.name}/{subdir.name}' must contain only README.md.",
+                        subdir,
+                    )
+                empty_scaffolds.append(f"{child.name}/{subdir.name}")
+
+            plugin_groups.append(
+                PluginGroup(
+                    name=child.name,
+                    root=child,
+                    readme_path=readme_path,
+                    plugin_roots=grouped_plugins,
+                    empty_scaffolds=empty_scaffolds,
+                )
+            )
+            continue
+
+        if not readme_path.exists():
+            add_issue(issues, "ERROR", f"Plugin entry '{child.name}' must contain README.md.", child)
+            continue
+        if extra_files:
+            add_issue(issues, "ERROR", f"Empty plugin scaffold '{child.name}' must contain only README.md.", child)
+            continue
+        empty_top_level_scaffolds.append(child.name)
+
+    return actual_plugins, plugin_groups, empty_top_level_scaffolds
+
+
+def validate_plugin_root(
+    plugin_root: PluginRoot,
     repo_root: Path,
     schema: Dict[str, object],
     seen_skill_names: Dict[str, Path],
+    root_row_map: Dict[str, Dict[str, str]],
     issues: List[Issue],
 ) -> int:
-    if not pack_root.readme_path.exists():
-        add_issue(issues, "ERROR", f"Missing README.md for {pack_root.kind} '{pack_root.name}'.", pack_root.root)
-
-    rows = parse_manifest(pack_root.manifest_path, issues)
-    index_names = parse_index(pack_root.index_path, issues)
-    discovered_pack = discover_pack_skills(pack_root, repo_root, issues)
-
-    row_map = validate_manifest_rows(
-        discovered=discovered_pack,
-        rows=rows,
-        manifest_path=pack_root.manifest_path,
-        scope_name=f"{pack_root.kind.title()} '{pack_root.name}'",
-        issues=issues,
-    )
-    validate_index_names(
-        discovered=discovered_pack,
-        index_names=index_names,
-        index_path=pack_root.index_path,
-        scope_name=f"{pack_root.kind.title()} '{pack_root.name}'",
-        issues=issues,
-    )
+    if not plugin_root.readme_path.exists():
+        add_issue(issues, "ERROR", f"Missing README.md for plugin '{plugin_root.name}'.", plugin_root.root)
+    rows = parse_manifest(plugin_root.manifest_path, issues)
+    index_names = parse_index(plugin_root.index_path, issues)
+    discovered_plugin = discover_plugin_skills(plugin_root, repo_root, issues)
+    row_map = validate_manifest_rows(discovered_plugin, rows, plugin_root.manifest_path, f"Plugin '{plugin_root.name}'", issues)
+    validate_index_names(discovered_plugin, index_names, plugin_root.index_path, f"Plugin '{plugin_root.name}'", issues)
 
     count = 0
-    for folder_name, relative_path in discovered_pack.items():
+    for folder_name, relative_path in discovered_plugin.items():
         row = row_map.get(folder_name)
-        layer = row.get("Layer", "") if row else ""
-        if row and row.get("Layer") not in BASE_LAYERS:
-            add_issue(
-                issues,
-                "ERROR",
-                f"{pack_root.kind.title()} manifest for '{folder_name}' uses an invalid layer token.",
-                pack_root.manifest_path,
-            )
+        if row is None:
+            continue
+        layer = row.get("Layer", "")
+        if layer not in BASE_LAYERS:
+            add_issue(issues, "ERROR", f"Plugin manifest for '{folder_name}' uses an invalid layer token.", plugin_root.manifest_path)
+            continue
+
         loaded = load_skill(repo_root / relative_path, layer, schema, issues)
         if loaded is None:
             continue
         name, _metadata = loaded
+        root_row = root_row_map.get(name)
+        if root_row and root_row.get("Scope") != "plugin":
+            add_issue(issues, "ERROR", f"Root manifest scope for '{name}' must be 'plugin'.", repo_root / ".codex" / "skills" / "skills-manifest.md")
+        if root_row and root_row.get("Layer") != layer:
+            add_issue(issues, "ERROR", f"Root manifest layer for '{name}' does not match its plugin catalog.", repo_root / ".codex" / "skills" / "skills-manifest.md")
         if name in seen_skill_names:
             add_issue(issues, "ERROR", f"Duplicate skill name '{name}'.", repo_root / relative_path)
         seen_skill_names[name] = repo_root / relative_path
         count += 1
         if folder_name != name:
-            add_issue(
-                issues,
-                "WARN",
-                f"Folder name '{folder_name}' does not match skill name '{name}'.",
-                repo_root / relative_path,
-            )
+            add_issue(issues, "WARN", f"Folder name '{folder_name}' does not match skill name '{name}'.", repo_root / relative_path)
     return count
 
 
@@ -525,20 +608,50 @@ def main() -> int:
     repo_root = args.root.resolve()
     issues: List[Issue] = []
     info_lines: List[str] = []
+
     schema_path = repo_root / "tools" / "skill-validator" / "skill-metadata-schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
+
+    legacy_base_root = repo_root / ".codex" / "skills"
+    for layer in BASE_LAYERS:
+        legacy_layer_path = legacy_base_root / layer
+        if legacy_layer_path.exists():
+            add_issue(issues, "ERROR", f"Stale base layer path '{legacy_layer_path.name}' found at the old root.", legacy_layer_path)
+
+    plugins_root = repo_root / ".codex" / "skills" / "plugins"
+    if plugins_root.exists():
+        for stale_file in sorted(plugins_root.rglob("skills-manifest.md")):
+            add_issue(issues, "ERROR", "Stale plugin catalog filename 'skills-manifest.md' found.", stale_file)
+        for stale_file in sorted(plugins_root.rglob("skills-index.md")):
+            add_issue(issues, "ERROR", "Stale plugin catalog filename 'skills-index.md' found.", stale_file)
 
     total_skills = 0
     seen_skill_names: Dict[str, Path] = {}
 
     base_manifest_path = repo_root / ".codex" / "skills" / "skills-manifest.md"
     base_index_path = repo_root / ".codex" / "skills" / "skills-index.md"
-    base_rows = parse_manifest(base_manifest_path, issues)
-    base_index_names = parse_index(base_index_path, issues)
+    root_rows = parse_manifest(base_manifest_path, issues)
+    root_index_names = parse_index(base_index_path, issues)
+
     base_skills = discover_base(repo_root, issues)
-    base_paths = {name: path.relative_to(repo_root) for name, (path, _layer) in base_skills.items()}
-    base_row_map = validate_manifest_rows(base_paths, base_rows, base_manifest_path, "Base skills", issues)
-    validate_index_names(base_paths, base_index_names, base_index_path, "Base skills", issues)
+    project_skills = discover_project(repo_root, issues)
+    direct_plugins, plugin_groups, empty_top_level_scaffolds = discover_plugins(repo_root, issues)
+
+    discovered_root: Dict[str, RegistrySkill] = {}
+    for name, (skill_path, layer) in base_skills.items():
+        discovered_root[name] = RegistrySkill(scope="base", path=skill_path.relative_to(repo_root), layer_hint=layer)
+    for name, skill_path in project_skills.items():
+        discovered_root[name] = RegistrySkill(scope="project", path=skill_path, layer_hint=None)
+    for plugin_root in direct_plugins:
+        for name, skill_path in discover_plugin_skills(plugin_root, repo_root, issues).items():
+            discovered_root[name] = RegistrySkill(scope="plugin", path=skill_path, layer_hint=None)
+    for plugin_group in plugin_groups:
+        for plugin_root in plugin_group.plugin_roots:
+            for name, skill_path in discover_plugin_skills(plugin_root, repo_root, issues).items():
+                discovered_root[name] = RegistrySkill(scope="plugin", path=skill_path, layer_hint=None)
+
+    root_row_map = validate_root_manifest_rows(discovered_root, root_rows, base_manifest_path, issues)
+    validate_root_index_names(discovered_root, root_index_names, base_index_path, issues)
 
     base_count = 0
     for folder_name, (skill_path, layer) in base_skills.items():
@@ -546,14 +659,11 @@ def main() -> int:
         if loaded is None:
             continue
         name, _metadata = loaded
-        row = base_row_map.get(name)
+        row = root_row_map.get(name)
+        if row and row.get("Scope") != "base":
+            add_issue(issues, "ERROR", f"Root manifest scope for '{name}' must be 'base'.", base_manifest_path)
         if row and row.get("Layer") != layer:
-            add_issue(
-                issues,
-                "ERROR",
-                f"Manifest layer for '{name}' does not match its canonical path.",
-                base_manifest_path,
-            )
+            add_issue(issues, "ERROR", f"Root manifest layer for '{name}' does not match its canonical path.", base_manifest_path)
         if name in seen_skill_names:
             add_issue(issues, "ERROR", f"Duplicate skill name '{name}'.", skill_path)
         seen_skill_names[name] = skill_path
@@ -562,28 +672,50 @@ def main() -> int:
         if folder_name != name:
             add_issue(issues, "WARN", f"Folder name '{folder_name}' does not match skill name '{name}'.", skill_path)
 
-    direct_packs, solution_groups = discover_pack_layout(repo_root, issues)
+    for folder_name, relative_path in project_skills.items():
+        row = root_row_map.get(folder_name)
+        layer = row.get("Layer", "") if row else ""
+        if row and row.get("Scope") != "project":
+            add_issue(issues, "ERROR", f"Root manifest scope for '{folder_name}' must be 'project'.", base_manifest_path)
+        if layer not in BASE_LAYERS:
+            add_issue(issues, "ERROR", f"Root manifest layer for project skill '{folder_name}' is missing or invalid.", base_manifest_path)
+            continue
+        loaded = load_skill(repo_root / relative_path, layer, schema, issues)
+        if loaded is None:
+            continue
+        name, _metadata = loaded
+        if name in seen_skill_names:
+            add_issue(issues, "ERROR", f"Duplicate skill name '{name}'.", repo_root / relative_path)
+        seen_skill_names[name] = repo_root / relative_path
+        total_skills += 1
+        if folder_name != name:
+            add_issue(issues, "WARN", f"Folder name '{folder_name}' does not match skill name '{name}'.", repo_root / relative_path)
 
-    for direct_pack in direct_packs:
-        count = validate_pack_root(direct_pack, repo_root, schema, seen_skill_names, issues)
+    for plugin_root in direct_plugins:
+        count = validate_plugin_root(plugin_root, repo_root, schema, seen_skill_names, root_row_map, issues)
         total_skills += count
         if count == 0:
-            info_lines.append(f"INFO: direct pack {direct_pack.name} has no skills yet")
+            info_lines.append(f"INFO: empty plugin scaffold {plugin_root.name}")
         else:
-            info_lines.append(f"INFO: validated {count} skills in direct pack {direct_pack.name}")
+            info_lines.append(f"INFO: validated {count} skills in plugin {plugin_root.name}")
 
-    for solution_group in solution_groups:
-        info_lines.append(f"INFO: discovered solution group {solution_group.name}")
-        if not solution_group.leaf_packs:
-            info_lines.append(f"INFO: solution group {solution_group.name} has no leaf packs yet")
+    for scaffold in empty_top_level_scaffolds:
+        info_lines.append(f"INFO: empty plugin scaffold {scaffold}")
+
+    for plugin_group in plugin_groups:
+        info_lines.append(f"INFO: discovered plugin group {plugin_group.name}")
+        if not plugin_group.plugin_roots and not plugin_group.empty_scaffolds:
+            info_lines.append(f"INFO: plugin group {plugin_group.name} has no plugin entries yet")
             continue
-        for leaf_pack in solution_group.leaf_packs:
-            count = validate_pack_root(leaf_pack, repo_root, schema, seen_skill_names, issues)
+        for plugin_root in plugin_group.plugin_roots:
+            count = validate_plugin_root(plugin_root, repo_root, schema, seen_skill_names, root_row_map, issues)
             total_skills += count
             if count == 0:
-                info_lines.append(f"INFO: leaf pack {leaf_pack.name} has no skills yet")
+                info_lines.append(f"INFO: empty plugin scaffold {plugin_root.name}")
             else:
-                info_lines.append(f"INFO: validated {count} skills in leaf pack {leaf_pack.name}")
+                info_lines.append(f"INFO: validated {count} skills in plugin {plugin_root.name}")
+        for scaffold in plugin_group.empty_scaffolds:
+            info_lines.append(f"INFO: empty plugin scaffold {scaffold}")
 
     errors = [issue for issue in issues if issue.severity == "ERROR"]
     warnings = [issue for issue in issues if issue.severity == "WARN"]
@@ -596,9 +728,7 @@ def main() -> int:
         print(f"{issue.severity}: {issue.message}{suffix}")
 
     if errors:
-        print(
-            f"INFO: validation failed with {total_skills} skills checked, {len(errors)} errors, {len(warnings)} warnings"
-        )
+        print(f"INFO: validation failed with {total_skills} skills checked, {len(errors)} errors, {len(warnings)} warnings")
         return 1
 
     print(f"INFO: validation passed with {total_skills} skills checked, 0 errors, {len(warnings)} warnings")

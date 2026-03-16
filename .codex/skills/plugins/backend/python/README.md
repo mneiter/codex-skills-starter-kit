@@ -1,10 +1,10 @@
-# Python Leaf Pack
+# Python Plugin Scaffold
 
-This leaf pack lives at `packs/backend/python/`. It is a reserved extension point for Python-specific skills, examples, and supporting documentation.
+This empty plugin scaffold lives at `.codex/skills/plugins/backend/python/`. It reserves the future location for Python-specific skills, examples, and supporting documentation.
 
-## Solution Group
+## Plugin Group
 
-This leaf pack belongs to the `backend` solution group.
+This scaffold belongs to the `backend` plugin group.
 
 ## Intended Scope
 
@@ -14,7 +14,7 @@ This leaf pack belongs to the `backend` solution group.
 
 ## Layer Relationship
 
-Any future skills in this leaf pack still use the canonical responsibility layers:
+Any future skills in this plugin still use the canonical responsibility layers:
 
 - `orchestration`
 - `guardrails`
@@ -24,4 +24,4 @@ Any future skills in this leaf pack still use the canonical responsibility layer
 
 - do not relabel or replace canonical base skills
 - do not add project-specific business rules here
-- keep this leaf pack empty until real Python-specific extension material is ready
+- keep this location as a README-only scaffold until real Python-specific skills exist

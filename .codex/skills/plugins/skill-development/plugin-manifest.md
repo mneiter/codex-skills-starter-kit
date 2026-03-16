@@ -1,6 +1,6 @@
-# Skill Development Direct Pack Manifest
+# Skill Development Plugin Manifest
 
-This manifest lists the skills included in the direct pack `packs/skill-development/`.
+This manifest lists the skills included in the plugin `.codex/skills/plugins/skill-development/`.
 
 ## Status Values
 
@@ -13,6 +13,6 @@ This manifest lists the skills included in the direct pack `packs/skill-developm
 
 | Skill | Layer | Status | Path | Purpose |
 | --- | --- | --- | --- | --- |
-| author-skill | atomic | active | `packs/skill-development/skills/author-skill/SKILL.md` | Guide the drafting of a new skill with clear scope, structure, and resource decisions. |
-| evaluate-skill | guardrails | active | `packs/skill-development/skills/evaluate-skill/SKILL.md` | Review whether a skill triggers correctly, stays within scope, and produces useful outputs. |
-| optimize-skill-description | atomic | active | `packs/skill-development/skills/optimize-skill-description/SKILL.md` | Improve a skill description so it better matches user intent and avoids false triggers. |
+| author-skill | atomic | active | `.codex/skills/plugins/skill-development/skills/author-skill/SKILL.md` | Guide the drafting of a new skill with clear scope, structure, and resource decisions. |
+| evaluate-skill | guardrails | active | `.codex/skills/plugins/skill-development/skills/evaluate-skill/SKILL.md` | Review whether a skill triggers correctly, stays within scope, and produces useful outputs. |
+| optimize-skill-description | atomic | active | `.codex/skills/plugins/skill-development/skills/optimize-skill-description/SKILL.md` | Improve a skill description so it better matches user intent and avoids false triggers. |

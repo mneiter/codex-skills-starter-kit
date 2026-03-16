@@ -1,14 +1,14 @@
-# Platform Solution Group
+# Platform Plugin Group
 
-This solution group organizes specialized packs for platform and operational ecosystems. It is a lightweight container, not a pack root.
+This plugin group organizes specialized plugins for platform and operational ecosystems. It is a lightweight container, not a plugin root.
 
-## Included Leaf Packs
+## Included Plugin Locations
 
-- `packs/platform/devops/`
+- `.codex/skills/plugins/platform/devops/`
 
 ## Relationship To The Layer Model
 
-The `platform` solution group organizes packs by functional area only. Any skills added inside its leaf packs still use the canonical responsibility layers:
+The `platform` plugin group organizes reusable extensions by functional area only. Any future skills added inside its plugins still use the canonical responsibility layers:
 
 - `orchestration`
 - `guardrails`
@@ -16,6 +16,6 @@ The `platform` solution group organizes packs by functional area only. Any skill
 
 ## Boundaries
 
-- keep only `README.md` at the solution-group root
-- place actual pack manifests and indexes inside each leaf pack
-- do not treat the solution group itself as a replacement for canonical base skills
+- keep only `README.md` at the plugin-group root
+- do not add `plugin-manifest.md` or `plugin-index.md` here
+- do not treat the plugin group itself as a replacement for canonical base skills

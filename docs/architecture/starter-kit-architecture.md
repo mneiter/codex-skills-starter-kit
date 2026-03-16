@@ -2,14 +2,23 @@
 
 ## Overview
 
-This starter kit uses two complementary organizational axes:
+This starter kit organizes skills under one canonical root:
 
-- the canonical responsibility layer model for base skills
-- the pack model for specialized extensions
+- `base skills` in `.codex/skills/base/`
+- reusable `plugins` in `.codex/skills/plugins/`
+- repository-specific `project skills` in `.codex/skills/project/`
+
+Responsibility classification still uses the same three layer tokens:
+
+- `orchestration`
+- `guardrails`
+- `atomic`
+
+Scope placement does not replace layer classification. A plugin skill or a project skill still uses one of the same three layers.
 
 ## Base Skills
 
-The canonical base skills live under `.codex/skills/` and remain independent from packs.
+Base skills are the canonical reusable foundation.
 
 ### Orchestration
 
@@ -23,40 +32,48 @@ Guardrail skills keep work safe, bounded, and reviewable. They preserve progress
 
 Atomic skills perform focused reusable tasks. They should solve one narrow problem well and remain easy to compose inside larger workflows.
 
-## Pack Model
+## Plugin Model
 
-Packs are the second axis of organization.
+Plugins are reusable extensions that stay outside the base layer.
 
-- a `direct pack` lives at `packs/<pack-name>/`
-- a `solution group` lives at `packs/<group>/`
-- a `leaf pack` lives at `packs/<group>/<pack-name>/`
+- a cross-cutting plugin may live directly under `.codex/skills/plugins/<plugin-name>/`
+- a `plugin group` may live at `.codex/skills/plugins/<group>/`
+- a grouped plugin may live at `.codex/skills/plugins/<group>/<plugin-name>/`
 
-Pack placement does not replace layer classification. A direct pack or leaf pack may contain orchestration, guardrails, and atomic skills.
+Plugin groups are organizational containers only. They are not plugins, they do not appear in the root registries, and they do not contain manifests or indexes.
 
-## Why The Two Axes Matter
+Only actual plugin roots that contain skills have:
 
-The two axes help prevent:
+- `plugin-manifest.md`
+- `plugin-index.md`
+- `skills/`
 
-- base skills becoming specialized or stack-bound
-- specialized packs pretending to be part of the canonical base layer
-- large workflows mixing responsibility classification with organizational grouping
-- pack sprawl without clear functional boundaries
+## Project Skills
 
-## Extension Model
+Project skills are repository-local additions. They live under `.codex/skills/project/`, stay out of the reusable base layer, and are still registered in the root manifest and index when they exist.
 
-Use these rules:
+## Why The Model Matters
 
-- add new reusable generic skills to the correct base layer only when they truly belong in the shared foundation
-- add project-specific skills outside the canonical base folders
-- add cross-cutting extensions as direct packs such as `packs/skill-development/`
-- add specialized packs under solution groups such as `packs/frontend/angular/`
-- keep solution groups lightweight and keep manifests and indexes only at direct-pack and leaf-pack roots
+This structure helps prevent:
+
+- base skills becoming specialized or project-bound
+- reusable plugins pretending to be part of the canonical base layer
+- project-specific knowledge leaking into shared reusable skills
+- fragmented discovery surfaces outside `.codex/skills/`
+
+## Extension Rules
+
+- add new reusable generic skills to `.codex/skills/base/` only when they truly belong in the shared foundation
+- add reusable specialized extensions under `.codex/skills/plugins/`
+- add repository-specific skills under `.codex/skills/project/`
+- keep plugin groups lightweight and keep plugin catalogs only at actual plugin roots
+- keep `.codex/skills/skills-manifest.md` and `.codex/skills/skills-index.md` as the single global discovery surface
 
 ## Canonical Examples
 
-- `packs/skill-development/`
-- `packs/frontend/angular/`
-- `packs/frontend/react/`
-- `packs/backend/python/`
-- `packs/backend/dotnet/`
-- `packs/platform/devops/`
+- `.codex/skills/plugins/skill-development/`
+- `.codex/skills/plugins/frontend/angular/`
+- `.codex/skills/plugins/frontend/react/`
+- `.codex/skills/plugins/backend/python/`
+- `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/devops/`

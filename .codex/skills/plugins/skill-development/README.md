@@ -1,22 +1,22 @@
-# Skill Development Direct Pack
+# Skill Development Plugin
 
 ## Purpose
 
-This direct pack lives at `packs/skill-development/`. It is an optional extension for repositories that want extra guidance around creating, reviewing, and refining skills. It is not part of the canonical base layer.
+This plugin lives at `.codex/skills/plugins/skill-development/`. It is a reusable extension for repositories that want extra guidance around creating, reviewing, and refining skills. It is not part of the canonical base layer.
 
-## When To Use This Pack
+## When To Use This Plugin
 
-Use this pack when a repository needs help with:
+Use this plugin when a repository needs help with:
 
 - creating a new skill from scratch
 - reviewing whether an existing skill is well-scoped
 - improving trigger descriptions
 - deciding whether a skill needs more bundled resources
-- deciding whether a skill should be split or moved into a pack
+- deciding whether a skill should be split or moved out of one scope into another
 
-## When Not To Use This Pack
+## When Not To Use This Plugin
 
-Do not use this pack for:
+Do not use this plugin for:
 
 - normal repository task execution
 - domain-specific implementation work unrelated to skill design
@@ -25,10 +25,10 @@ Do not use this pack for:
 
 ## Boundaries
 
-- This pack is an extension, not canonical base content.
-- It must not relabel, replace, or modify the canonical base skills under `.codex/skills/`.
-- It maintains its own manifest, index, references, and templates.
-- It remains a direct pack rather than being placed inside a solution group because it is a cross-cutting workflow capability.
+- This plugin is an extension, not canonical base content.
+- It must not relabel, replace, or modify the canonical base skills under `.codex/skills/base/`.
+- It maintains its own plugin manifest, plugin index, references, and templates.
+- It remains a top-level plugin because it is a cross-cutting workflow capability rather than a grouped specialized extension.
 
 ## Included Skills
 

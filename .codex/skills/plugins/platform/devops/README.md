@@ -1,10 +1,10 @@
-# DevOps Leaf Pack
+# Devops Plugin Scaffold
 
-This leaf pack lives at `packs/platform/devops/`. It is a reserved extension point for DevOps-specific skills, examples, and supporting documentation.
+This empty plugin scaffold lives at `.codex/skills/plugins/platform/devops/`. It reserves the future location for devops-specific skills, examples, and supporting documentation.
 
-## Solution Group
+## Plugin Group
 
-This leaf pack belongs to the `platform` solution group.
+This scaffold belongs to the `platform` plugin group.
 
 ## Intended Scope
 
@@ -14,7 +14,7 @@ This leaf pack belongs to the `platform` solution group.
 
 ## Layer Relationship
 
-Any future skills in this leaf pack still use the canonical responsibility layers:
+Any future skills in this plugin still use the canonical responsibility layers:
 
 - `orchestration`
 - `guardrails`
@@ -24,4 +24,4 @@ Any future skills in this leaf pack still use the canonical responsibility layer
 
 - do not relabel or replace canonical base skills
 - do not add project-specific business rules here
-- keep this leaf pack empty until real DevOps-specific extension material is ready
+- keep this location as a README-only scaffold until real devops-specific skills exist
