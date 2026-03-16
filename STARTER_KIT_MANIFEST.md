@@ -62,11 +62,12 @@ The following repository elements are canonical:
 
 ### Future Pack Policy
 
-Future technology packs must be added without polluting the canonical base layer.
+Future packs must be added without polluting the canonical base layer.
 
+- Packs are extensions, not canonical base content.
 - Place technology-specific packs under a separate namespace such as `packs/<pack-name>/`, or publish them in a separate repository.
 - Give each pack its own manifest, index, and supporting documentation.
-- Do not modify, rename, or relabel canonical base skills to fit a pack.
+- Packs must not modify, rename, or relabel canonical base skills to fit a pack.
 - Treat the base kit as the shared foundation and packs as additive extensions.
 
 ## Maintenance Expectations

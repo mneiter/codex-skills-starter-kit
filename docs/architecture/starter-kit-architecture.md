@@ -31,13 +31,15 @@ By separating concerns, the starter kit stays easier to maintain and easier to e
 
 ## Extension Model
 
-The base kit is the shared foundation. New project-local skills or future technology packs should extend the system without modifying the meaning of canonical base skills.
+The base kit is the shared foundation. New project-local skills or optional packs should extend the system without modifying the meaning of canonical base skills.
 
 Use these rules:
 
 - add new reusable generic skills to the correct base layer only when they truly belong in the base kit
 - add project-specific skills outside the canonical base folders
-- add technology-specific packs under a separate namespace such as `packs/<pack-name>/`
+- add optional packs under a separate namespace such as `packs/<pack-name>/`
+
+Optional packs are non-canonical extensions. They may add their own skills, templates, references, and docs, but they must not relabel, replace, or absorb the canonical base skills under `.codex/skills/`.
 
 ## Design Principles
 
