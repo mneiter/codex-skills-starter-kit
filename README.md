@@ -13,6 +13,12 @@ This repository exists to standardize the minimum durable structure for Codex sk
 - documentation that explains how to extend the kit without polluting the base layer
 - optional extension packs that can add specialized guidance without changing the base layer
 
+## Release Status
+
+- `v1.0.0` is the first stable baseline of `codex-skills-starter-kit`.
+- `main` continues as the active development line for the next iteration, `v1.1.0`.
+- `release/1.0.0` represents the frozen baseline for the first stable version.
+
 ## Canonical Layer Model
 
 The base kit organizes skills into three layers:
