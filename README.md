@@ -50,12 +50,25 @@ templates/
   docs/
 
 packs/
+  angular/
+  devops/
+  python/
+  react/
   skill-development/
 
 docs/
   architecture/
   conventions/
+  packs/
+  releases/
+  skills/
   workflows/
+
+scripts/
+  validate-skills
+
+tools/
+  skill-validator/
 
 examples/
   minimal-project/
@@ -102,13 +115,14 @@ Optional packs are additive extensions. They are useful when a repository needs 
 - packs must maintain their own manifest, index, and supporting docs
 
 This repository now includes `packs/skill-development/` as a documentation-first example of an extension pack for skill authoring, review, and description improvement.
+It also includes empty pack scaffolds for `angular`, `react`, `python`, and `devops` so future technology-specific skills can be added without changing the base layer.
 
 ## What This Repository Intentionally Excludes
 
 This starter kit does not ship:
 
-- framework-specific skills
-- frontend-specific or backend-specific packs
+- framework-specific skills in the canonical base layer
+- populated frontend-specific, backend-specific, or vendor-specific pack content
 - vendor-specific workflows
 - project-specific business context
 - CI pipelines, licenses, or issue templates
@@ -121,12 +135,17 @@ Those concerns belong either in the adopting repository or in separate add-on pa
 - `.codex/skills/skills-index.md` is the quick catalog for discovery.
 - `templates/skill-template/SKILL.md` is the canonical authoring template.
 - `STARTER_KIT_MANIFEST.md` defines what is canonical in this repository.
+- `docs/skills/skill-metadata.md` defines the normalized metadata contract for skills.
+- `docs/skills/validation.md` explains the repository validation workflow.
+- `docs/packs/architecture.md` explains how technology packs extend the starter kit.
+- `scripts/validate-skills` runs the skill validator.
 - `packs/skill-development/README.md` explains the optional skill-development extension pack.
 
 ## Suggested Next Iteration
 
 Reasonable v1.1 improvements include:
 
-- automated validation for manifest and section consistency
+- external skill import workflow
 - optional agent metadata generation for skills
-- additional packs that build on the base kit without changing it
+- richer validation reporting or test fixtures
+- populated technology packs that build on the base kit without changing it

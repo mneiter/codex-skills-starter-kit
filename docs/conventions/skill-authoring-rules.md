@@ -9,6 +9,38 @@
 - Use the canonical section order in every `SKILL.md`.
 - Keep names lowercase, hyphenated, stable, and reusable.
 
+## Metadata Model
+
+The repository standardizes skill metadata as a normalized record that is derived from each `SKILL.md` and its manifest entry. The current model does not require expanding trigger frontmatter beyond `name` and `description`.
+
+The normalized fields are:
+
+- `name`
+- `layer`
+- `purpose`
+- `triggers`
+- `inputs`
+- `outputs`
+- `dependencies`
+- `verification`
+
+Use the repository's canonical layer tokens exactly:
+
+- `atomic`
+- `guardrails`
+- `orchestration`
+
+The validator derives metadata from the existing skill structure:
+
+- `name` from frontmatter
+- `layer` from the manifest entry, or path-derived fallback for canonical base skills
+- `purpose` from the `Purpose` section
+- `triggers` from the frontmatter description and `When To Use`
+- `inputs` from the `Inputs` section
+- `outputs` from the `Outputs` section
+- `dependencies` from explicit dependency notes in `Inputs`, or `[]` when none are stated
+- `verification` from the `Verification` section
+
 ## Required `SKILL.md` Sections
 
 Every skill must include:
@@ -63,9 +95,13 @@ Each skill should have one primary responsibility. If a skill starts combining c
 - Prefer practical steps and concrete outputs over abstract principles.
 - Keep skills composable so orchestration can combine them cleanly.
 - Prefer bundled resources only when they reduce repetition or improve reliability.
+- Keep the first paragraph of `Purpose` concise so it can serve as clean metadata.
+- Write `When To Use`, `Inputs`, `Outputs`, and `Verification` as compact lists whenever practical so metadata stays easy to extract.
+- If the skill has non-obvious dependencies, add one `Inputs` bullet that begins with `Dependencies:`.
 
 ## Maintenance Rules
 
 - Update the manifest and index whenever a skill is added, renamed, deprecated, or retired.
 - Keep documentation aligned with the actual repository structure.
 - Do not let examples become alternate sources of truth for the canonical base layer.
+- Run `scripts/validate-skills` after changing skills, manifests, indexes, or pack structure.
