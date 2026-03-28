@@ -42,7 +42,7 @@ Plugins are reusable extensions that stay outside the base layer.
 
 Plugin groups are organizational containers only. They are not plugins, they do not appear in the root registries, and they do not contain manifests or indexes.
 
-For example, `.codex/skills/plugins/platform/` remains a plugin group even when `.codex/skills/plugins/platform/devops/` is a real plugin root.
+For example, `.codex/skills/plugins/platform/` remains a plugin group even when `.codex/skills/plugins/platform/data/` and `.codex/skills/plugins/platform/devops/` are real plugin roots.
 
 Only actual plugin roots that contain skills have:
 
@@ -78,4 +78,5 @@ This structure helps prevent:
 - `.codex/skills/plugins/frontend/react/`
 - `.codex/skills/plugins/backend/python/`
 - `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/data/`
 - `.codex/skills/plugins/platform/devops/`

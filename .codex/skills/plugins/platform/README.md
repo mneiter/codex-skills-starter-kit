@@ -4,6 +4,7 @@ This plugin group organizes specialized plugins for platform and operational eco
 
 ## Included Plugin Locations
 
+- `.codex/skills/plugins/platform/data/` as an actual plugin root
 - `.codex/skills/plugins/platform/devops/` as an actual plugin root
 
 ## Relationship To The Layer Model
@@ -19,4 +20,4 @@ The `platform` plugin group organizes reusable extensions by functional area onl
 - keep only `README.md` at the plugin-group root
 - do not add `plugin-manifest.md` or `plugin-index.md` here
 - do not treat the plugin group itself as a replacement for canonical base skills
-- keep plugin catalogs and skills inside plugin roots such as `.codex/skills/plugins/platform/devops/`
+- keep plugin catalogs and skills inside plugin roots such as `.codex/skills/plugins/platform/data/` and `.codex/skills/plugins/platform/devops/`

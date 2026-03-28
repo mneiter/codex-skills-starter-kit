@@ -59,6 +59,7 @@ It must contain:
 
 Grouped plugin example:
 
+- `.codex/skills/plugins/platform/data/`
 - `.codex/skills/plugins/platform/devops/`
 
 Optional directories may be added when the plugin has supporting material:
@@ -107,6 +108,7 @@ Canonical examples:
 - `.codex/skills/plugins/frontend/react/`
 - `.codex/skills/plugins/backend/python/`
 - `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/data/`
 - `.codex/skills/plugins/platform/devops/`
 
 ## Boundaries

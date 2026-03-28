@@ -107,6 +107,22 @@ Plugin: `devops`
 - Purpose: Manage GitHub workflow state across repositories, pull requests, issues, reviews, and checks without absorbing verification, repair, refactoring, orchestration, or PR narrative work.
 - When to use: Use when a repository needs GitHub-aware triage, blocked pull request inspection, review clustering, or a bounded GitHub-side lifecycle action.
 
+### docker-operations
+
+- Scope: `plugin`
+- Layer: `atomic`
+- Purpose: Manage Docker workflow state across Dockerfiles, build context, images, containers, and compose services without absorbing verification, repair, refactoring, orchestration, or PR narrative work.
+- When to use: Use when a repository needs Docker-aware triage, image or container inspection, compose-context diagnosis, or the next Docker-native diagnostic step.
+
+Plugin: `data`
+
+### postgres-operations
+
+- Scope: `plugin`
+- Layer: `atomic`
+- Purpose: Manage PostgreSQL operational state across sessions, queries, locks, indexes, and schema-risk signals without absorbing verification, repair, refactoring, orchestration, or PR narrative work.
+- When to use: Use when a repository needs PostgreSQL-aware triage, safe read-only diagnostics, query or lock inspection, or the next database-native diagnostic step.
+
 ## Project Skills
 
 No project skills are registered in the starter kit by default. Adopting repositories should add project-specific skills under `.codex/skills/project/` and register them here when they exist.

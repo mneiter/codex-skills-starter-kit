@@ -30,6 +30,7 @@ Canonical examples:
 - `.codex/skills/plugins/frontend/react/`
 - `.codex/skills/plugins/backend/python/`
 - `.codex/skills/plugins/backend/dotnet/`
+- `.codex/skills/plugins/platform/data/`
 - `.codex/skills/plugins/platform/devops/`
 
 ## Step 2: Create A Plugin Group When Needed
