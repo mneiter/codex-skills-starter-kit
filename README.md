@@ -59,9 +59,9 @@ Plugins are reusable extensions that stay outside the base layer.
 
 This repository currently includes:
 
-- the actual plugin `.codex/skills/plugins/skill-development/`
+- the actual plugins `.codex/skills/plugins/skill-development/` and `.codex/skills/plugins/platform/devops/`
 - the plugin groups `.codex/skills/plugins/frontend/`, `.codex/skills/plugins/backend/`, and `.codex/skills/plugins/platform/`
-- empty plugin scaffolds for future specialized plugins under those groups
+- the empty plugin scaffolds `.codex/skills/plugins/frontend/angular/`, `.codex/skills/plugins/frontend/react/`, `.codex/skills/plugins/backend/python/`, and `.codex/skills/plugins/backend/dotnet/`
 
 ### Project Skills
 

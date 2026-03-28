@@ -1,27 +1,37 @@
-# Devops Plugin Scaffold
+# Devops Plugin
 
-This empty plugin scaffold lives at `.codex/skills/plugins/platform/devops/`. It reserves the future location for devops-specific skills, examples, and supporting documentation.
+## Purpose
 
-## Plugin Group
+This plugin lives at `.codex/skills/plugins/platform/devops/`. It is a reusable extension for GitHub-centered DevOps workflow operations that do not belong in the canonical base layer.
 
-This scaffold belongs to the `platform` plugin group.
+## When To Use This Plugin
 
-## Intended Scope
+Use this plugin when a repository needs help with:
 
-- CI, deployment, and infrastructure workflows
-- environment operations, release, or reliability guidance
-- examples or references that only make sense in platform-heavy repositories
+- GitHub workflow state inspection
+- pull request and issue lifecycle triage
+- blocked pull request summaries and next-step guidance
+- review feedback clustering
+- bounded GitHub-side metadata actions with explicit targets
 
-## Layer Relationship
+## When Not To Use This Plugin
 
-Any future skills in this plugin still use the canonical responsibility layers:
+Do not use this plugin for:
 
-- `orchestration`
-- `guardrails`
-- `atomic`
+- multi-skill workflow orchestration
+- validation execution or test interpretation
+- repair loops or refactoring work
+- reviewer-facing pull request narratives
+- GitHub Actions authoring or workflow editing
+- deployment, infrastructure execution, or other broad DevOps operations
 
 ## Boundaries
 
-- do not relabel or replace canonical base skills
-- do not add project-specific business rules here
-- keep this location as a README-only scaffold until real devops-specific skills exist
+- This plugin is an extension, not canonical base content.
+- `.codex/skills/plugins/platform/` remains a plugin group and keeps only `README.md`.
+- `.codex/skills/plugins/platform/devops/` is the actual plugin root and owns its local catalogs.
+- Keep GitHub-specific and DevOps-specific guidance out of the canonical base skills.
+
+## Included Skills
+
+- `github-operations`

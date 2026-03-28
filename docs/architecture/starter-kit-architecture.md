@@ -42,6 +42,8 @@ Plugins are reusable extensions that stay outside the base layer.
 
 Plugin groups are organizational containers only. They are not plugins, they do not appear in the root registries, and they do not contain manifests or indexes.
 
+For example, `.codex/skills/plugins/platform/` remains a plugin group even when `.codex/skills/plugins/platform/devops/` is a real plugin root.
+
 Only actual plugin roots that contain skills have:
 
 - `plugin-manifest.md`

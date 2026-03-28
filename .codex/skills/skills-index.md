@@ -98,6 +98,15 @@ Plugin: `skill-development`
 - Purpose: Improve a skill description so it triggers on the right user intent and stays distinct from nearby skills.
 - When to use: Use when a skill workflow is mostly sound but its description is under-triggering, over-triggering, or colliding with adjacent skills.
 
+Plugin: `devops`
+
+### github-operations
+
+- Scope: `plugin`
+- Layer: `atomic`
+- Purpose: Manage GitHub workflow state across repositories, pull requests, issues, reviews, and checks without absorbing verification, repair, refactoring, orchestration, or PR narrative work.
+- When to use: Use when a repository needs GitHub-aware triage, blocked pull request inspection, review clustering, or a bounded GitHub-side lifecycle action.
+
 ## Project Skills
 
 No project skills are registered in the starter kit by default. Adopting repositories should add project-specific skills under `.codex/skills/project/` and register them here when they exist.

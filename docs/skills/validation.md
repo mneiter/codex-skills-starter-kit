@@ -51,6 +51,7 @@ Validation rules:
 - only actual plugins with real skills require `plugin-manifest.md` and `plugin-index.md`
 - empty plugin scaffolds are valid when they contain only `README.md`
 - only actual skills are registered in the root manifest and index
+- example: `.codex/skills/plugins/platform/` is a plugin group, while `.codex/skills/plugins/platform/devops/` is an actual plugin root once it contains local catalogs and `skills/`
 
 ## Exit Behavior
 
@@ -65,15 +66,15 @@ Validation rules:
 ```text
 INFO: discovered 9 canonical base skills
 INFO: validated 3 skills in plugin skill-development
-INFO: discovered plugin group backend
-INFO: empty plugin scaffold backend/dotnet
-INFO: empty plugin scaffold backend/python
 INFO: discovered plugin group frontend
 INFO: empty plugin scaffold frontend/angular
 INFO: empty plugin scaffold frontend/react
 INFO: discovered plugin group platform
-INFO: empty plugin scaffold platform/devops
-INFO: validation passed with 12 skills checked, 0 errors, 0 warnings
+INFO: validated 1 skills in plugin platform/devops
+INFO: discovered plugin group backend
+INFO: empty plugin scaffold backend/dotnet
+INFO: empty plugin scaffold backend/python
+INFO: validation passed with 13 skills checked, 0 errors, 0 warnings
 ```
 
 ## When To Run It

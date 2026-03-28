@@ -44,6 +44,7 @@ It must:
 - not contain `plugin-index.md`
 - not appear in the root skill registries
 - not be treated as a plugin root by the validator
+- remain a pure container even when one of its child paths is an actual plugin root, for example `.codex/skills/plugins/platform/` versus `.codex/skills/plugins/platform/devops/`
 
 ## Actual Plugin Rules
 
@@ -55,6 +56,10 @@ It must contain:
 - `plugin-manifest.md`
 - `plugin-index.md`
 - `skills/`
+
+Grouped plugin example:
+
+- `.codex/skills/plugins/platform/devops/`
 
 Optional directories may be added when the plugin has supporting material:
 
